@@ -1,0 +1,379 @@
+.App {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.App-header {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.App-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.5rem;
+}
+
+.App-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+.debate-setup .input-group {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.debate-setup input {
+  flex: 1;
+  min-width: 300px;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.debate-setup input:focus {
+  outline: none;
+  border-color: #2a5298;
+}
+
+.debate-setup button {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.debate-setup .primary-button {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+}
+
+.debate-setup .primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.debate-setup .primary-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.debate-setup .secondary-button {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.debate-setup .secondary-button:hover {
+  background: #e0e0e0;
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  border-left: 4px solid #f44336;
+}
+
+.debate-view {
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.debate-header {
+  margin-bottom: 25px;
+}
+
+.debate-header h2 {
+  color: #1e3c72;
+  margin-bottom: 10px;
+}
+
+.debate-question {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-style: italic;
+  color: #333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.debate-meta {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  color: #666;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.debate-rounds {
+  margin-bottom: 25px;
+}
+
+.debate-round {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.debate-round h3 {
+  color: #1e3c72;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.debate-round h3::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-radius: 2px;
+}
+
+.model-responses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.model-response {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 18px;
+  width: 180px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.model-response:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.model-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.model-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.model-name.claude { color: #1e3c72; }
+.model-name.gpt5 { color: #10b981; }
+.model-name.gemini { color: #f59e0b; }
+.model-name.qwen { color: #8b5cf6; }
+.model-name.grok { color: #ef4444; }
+
+.timestamp {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.model-content {
+  line-height: 1.5;
+  color: #444;
+  font-size: 0.95rem;
+  min-height: 60px;
+}
+
+.debate-verdict {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  border-radius: 15px;
+  padding: 25px;
+  margin-top: 25px;
+  border: 2px solid #ffb74d;
+}
+
+.debate-verdict h2 {
+  color: #e65100;
+  margin-top: 0;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.debate-verdict h2::before {
+  content: '⚖️';
+  font-size: 1.5rem;
+}
+
+.verdict-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.verdict-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.verdict-section {
+  margin-bottom: 18px;
+}
+
+.verdict-section h3 {
+  color: #e65100;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verdict-section h3::before {
+  content: '•';
+  font-size: 1.2rem;
+}
+
+.verdict-section ul {
+  text-align: left;
+  padding-left: 20px;
+}
+
+.verdict-section li {
+  margin-bottom: 8px;
+  color: #555;
+  position: relative;
+}
+
+.verdict-section li::before {
+  content: '▹';
+  position: absolute;
+  left: -15px;
+  color: #ffb74d;
+}
+
+.verdict-meta {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px dashed #ffb74d;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.debate-waiting {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.debate-waiting p {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1e3c72;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.debate-actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.secondary-button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.secondary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .App {
+    padding: 15px;
+  }
+  
+  .App-header {
+    padding: 20px;
+  }
+  
+  .App-header h1 {
+    font-size: 2rem;
+  }
+  
+  .debate-setup .input-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .debate-setup input {
+    min-width: auto;
+  }
+  
+  .model-responses {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .model-response {
+    width: 100%;
+    max-width: 350px;
+  }
+  
+  .debate-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+}
