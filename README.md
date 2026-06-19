@@ -1,103 +1,77 @@
-# War Table AI Debate System
+# War Table
 
-A sophisticated AI debate platform where five distinct AI models (Claude, GPT-5, Gemini, Qwen, and Grok) engage in structured three-round debates to provide comprehensive perspectives on complex questions.
+**5 AIs. One Decision.**
 
-## 🎯 Overview
+A beautiful, self-contained demo where Claude, GPT-5, Gemini, Qwen, and Grok debate your toughest questions in three structured rounds — and deliver a single, thoughtful verdict.
 
-War Table facilitates multi-perspective AI debates where each model contributes according to structured debate rules:
-- **Round 1: Opening Statements** - Each model presents initial position and reasoning
-- **Round 2: Rebuttals** - Models respond to others' arguments and defend their positions  
-- **Round 3: Synthesis** - Models collaborate to formulate a unified, balanced verdict
+Live demo: [https://nostalgicgarethdev.github.io/war-table/](https://nostalgicgarethdev.github.io/war-table/)
 
-The system focuses on debate orchestration and model integration without blockchain dependencies.
+![WARTABLE AGENTS poster background](frontend/src/assets/wartable-agents-bg.jpg)
 
-## 🏗️ Architecture
+## ✨ Features
 
+- **Fully standalone** — No backend or API keys required. Everything runs beautifully in the browser.
+- **Rich simulation** — Each model has a distinct personality and argues across Opening Statements → Rebuttals → Synthesis.
+- **Interactive & configurable** — Choose number of rounds and which models participate.
+- **Stunning UI** — Professional dark cyber theme with the official WARTABLE AGENTS poster as a dramatic full-screen background, glassmorphic panels, and smooth animations.
+- **Deployed via GitHub Actions** — Clean static site on GitHub Pages.
+
+## 🚀 Quick Start
+
+```bash
+git clone https://github.com/nostalgicgarethdev/war-table.git
+cd war-table/frontend
+npm install
+npm run dev
 ```
-User Question → Debate Orchestrator → 
-├── Claude Agent (Anthropic)
-├── GPT-5 Agent (OpenAI)  
-├── Gemini Agent (Google)
-├── Qwen Agent (Alibaba)
-└── Grok Agent (xAI)
-```
 
-### Core Components
+Open http://localhost:5173 — enter any question and watch the agents debate.
 
-1. **Frontend** (`frontend/`)
-   - React/Vite application with Tailwind CSS
-   - Real-time debate visualization and progress tracking
-   - Interactive interface for submitting questions and viewing debates
-   - Model-specific styling and avatar representations
-
-2. **Backend API** (`backend/`)
-   - Node.js/Hono server handling debate orchestration
-   - RESTful API for session management and debate flow
-   - Round-based debate control with context preservation
-   - Consensus engine for verdict generation
-   - Mock AI implementations for testing without API keys
-
-3. **Debate Engine**
-   - Structures debates into 3 rounds with specific prompting
-   - Manages conversation history and context windows
-   - Implements lightweight consensus algorithms for final verdict
-   - Tracks token usage and timing for each model response
-
-4. **Model Integrations**
-   - Abstracted API clients for each AI provider
-   - Unified interface for sending prompts and receiving responses
-   - Distinct response personalities for each model
-   - Error handling and fallback mechanisms
-
-## 📁 Project Structure
+## 🛠️ Project Structure (Frontend-focused)
 
 ```
 war-table/
-├── backend/                 # Node.js/TypeScript API server
+├── frontend/              # The beautiful React demo (the star of the show)
 │   ├── src/
-│   │   ├── api/             # API routes (Hono)
-│   │   ├── debate/          # Debate orchestration logic
-│   │   ├── models/          # AI model providers
-│   │   ├── consensus/       # Verdict generation
-│   │   └── types/           # TypeScript type definitions
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── ...
-├── frontend/                # React/Vite/TypeScript client
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── App.tsx          # Main application component
-│   │   └── App.css          # Styling
-│   ├── package.json
-│   ├── tsconfig.json
+│   │   ├── App.tsx        # Main app + debate simulator
+│   │   ├── App.css        # Professional dark + glassmorphic styles
+│   │   └── assets/        # WARTABLE AGENTS background
+│   ├── public/
 │   └── vite.config.ts
-├── .github/                 # GitHub Actions workflows
-│   └── workflows/
-│       └── deploy.yml       # Frontend deployment to GitHub Pages
-├── README.md                # This file
-└── package.json             # Root package (workspace)
+├── backend/               # (Optional) Future real model integrations
+├── .github/workflows/deploy.yml  # Official GitHub Pages deployment
+└── README.md
 ```
 
-## 🔧 Development Setup
+## 📦 Deployment
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- npm or yarn package manager
+The site is automatically deployed to GitHub Pages using the official Actions workflow.
 
-### Installation
-```bash
-# Clone the repository
-git clone https://github.com/nostalgicgarethdev/war-table.git
-cd war-table
+1. Push to `main`.
+2. GitHub Actions builds the frontend and deploys the `dist` folder.
+3. Settings → Pages must be set to **GitHub Actions**.
 
-# Install dependencies for both frontend and backend
-npm install
-# Or if using workspaces:
-# npm run install:all
-```
+The WARTABLE AGENTS background image is included and will display beautifully.
 
-### Environment Variables
-Create a `.env` file in the backend directory (optional for mock mode):
+## 🧹 Repo Cleanup
+
+- Proper `.gitignore` (no node_modules, builds, or dist committed)
+- Legacy static demos cleaned up
+- Frontend is now the primary, polished experience
+- Image assets properly managed via Vite
+
+## 🎨 Design Notes
+
+- Dark professional theme with cyber accents
+- The official poster serves as a fixed, dramatic background
+- Glassmorphic surfaces for depth and elegance
+- Fully responsive and accessible
+
+---
+
+Made with ❤️ for great AI debates. The frontend looks really nice. 
+
+(Backend exists for future real API calls if you want to extend it.)
 ```env
 PORT=3001
 NODE_ENV=development

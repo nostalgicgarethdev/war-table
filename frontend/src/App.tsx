@@ -187,10 +187,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div className="flex items-center justify-center gap-3 mb-1">
-          <span className="text-4xl">🪑</span>
-          <h1 className="text-5xl md:text-[3.25rem]">War Table</h1>
-        </div>
+        <h1 className="text-[2.65rem] md:text-[2.85rem] tracking-tighter">War Table</h1>
         <p className="tagline text-white/90">Five AI minds. One rigorous debate. A single, thoughtful verdict.</p>
         <div className="model-indicators">
           <span className="model-dot claude" title="Claude"></span>
@@ -208,13 +205,13 @@ function App() {
             <div className="config-panel mb-6">
               <div className="config-row">
                 <div>
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Rounds</label>
+                  <label className="text-sm font-medium text-[var(--text-muted)]">Rounds</label>
                   <div className="flex gap-2 mt-1">
                     {[1,2,3].map(r => (
                       <button 
                         key={r}
                         onClick={() => setNumRounds(r)}
-                        className={`px-4 py-1 rounded-full text-sm border transition ${numRounds === r ? 'bg-[#1e3c72] text-white border-[#1e3c72]' : 'border-gray-300 hover:bg-gray-100'}`}
+                        className={`px-3.5 py-0.5 text-xs rounded-full border transition font-medium ${numRounds === r ? 'bg-[var(--accent)] text-white border-[var(--accent)]' : 'border-[var(--border)] hover:bg-white/5'}`}
                       >
                         {r}
                       </button>
@@ -223,7 +220,7 @@ function App() {
                 </div>
 
                 <div className="flex-1">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Models ({selectedModels.length}/5)</label>
+                  <label className="text-sm font-medium text-[var(--text-muted)]">Models ({selectedModels.length}/5)</label>
                   <div className="flex flex-wrap gap-1.5 mt-1">
                     {allModels.map(m => {
                       const meta = modelMeta[m];
@@ -238,7 +235,7 @@ function App() {
                               setSelectedModels([...selectedModels, m]);
                             }
                           }}
-                          className={`px-3 py-1 text-xs rounded-full border transition flex items-center gap-1 ${active ? 'font-medium' : 'opacity-60 hover:opacity-100'}`}
+                          className={`px-2.5 py-0.5 text-xs rounded-full border transition flex items-center gap-1 ${active ? 'font-medium' : 'opacity-55 hover:opacity-90'}`}
                           style={{ 
                             borderColor: active ? meta.color : '#d1d5db',
                             background: active ? meta.color + '15' : 'transparent',
@@ -314,11 +311,11 @@ function App() {
         ) : (
           <div className="debate-view max-w-4xl mx-auto">
             <div className="debate-header">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="px-3 py-1 rounded-full bg-[#1e3c72] text-white text-xs font-medium tracking-wide">LIVE DEBATE</div>
-                <div className="text-sm text-gray-500">Round {currentRound} of {debateData?.config?.rounds || 3}</div>
+              <div className="flex items-center gap-2 mb-2 text-sm">
+                <span className="px-2.5 py-0.5 rounded-full bg-[var(--accent)]/20 text-[var(--accent)] text-xs font-medium tracking-[0.5px]">IN PROGRESS</span>
+                <span className="text-[var(--text-muted)]">Round {currentRound} of {debateData?.config?.rounds || 3}</span>
               </div>
-              <h2 className="text-2xl">Debate in Progress</h2>
+              <h2 className="text-xl font-semibold tracking-tight">Debate in Progress</h2>
               <p className="debate-question">"{debateData?.question || question}"</p>
               <div className="debate-progress">
                 <div className="progress-bar">
