@@ -32,17 +32,14 @@ jobs:
           cache: 'npm'
 
       - name: Install Frontend Dependencies
-        run: |
-          cd frontend
-          echo "Current directory: $(pwd)"
-          ls -la package-lock.json || echo "package-lock.json NOT found in $(pwd)"
-          npm ci
+        run: npm ci --prefix frontend
+        env:
+          CI: true
 
       - name: Build Frontend
-        run: |
-          cd frontend
-          echo "Current directory: $(pwd)"
-          npm run build
+        run: npm run build --prefix frontend
+        env:
+          CI: true
 
       - name: Create .nojekyll file
         run: touch frontend/dist/.nojekyll
