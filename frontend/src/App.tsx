@@ -1,9 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
-
-// Use React to satisfy TypeScript unused variable check
-const _react = React;
-_react && console.log('React loaded'); // Use _react to prevent unused variable warning
 
 function App() {
   const [question, setQuestion] = useState('');
@@ -13,8 +9,131 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [debateStatus, setDebateStatus] = useState<string>('idle'); // idle, started, in_progress, completed
   const [currentRound, setCurrentRound] = useState(0);
-  const pollIntervalRef = useRef<any>(null); // Fixed NodeJS.Timeout issue
+  const pollIntervalRef = useRef<any>(null);
+  const currentSessionIdRef = useRef<string | null>(null);
   const [isPolling, setIsPolling] = useState(false);
+
+  // Frontend config (makes the demo interactive and powerful)
+  const [numRounds, setNumRounds] = useState(3);
+  const allModels = ['claude', 'gpt5', 'gemini', 'qwen', 'grok'];
+  const [selectedModels, setSelectedModels] = useState<string[]>(allModels);
+
+  const modelMeta: Record<string, { name: string; color: string; emoji: string }> = {
+    claude: { name: 'Claude', color: '#1e3c72', emoji: '🧠' },
+    gpt5: { name: 'GPT-5', color: '#10b981', emoji: '📊' },
+    gemini: { name: 'Gemini', color: '#f59e0b', emoji: '🔭' },
+    qwen: { name: 'Qwen', color: '#8b5cf6', emoji: '⚙️' },
+    grok: { name: 'Grok', color: '#ef4444', emoji: '🚀' },
+  };
+
+  // Rich client-side simulator - the heart of the public demo experience.
+  // Fully self-contained, no backend required. Configurable rounds & models.
+  const simulateDebate = (q: string) => {
+    const sid = 'demo-' + Date.now().toString(36);
+    const trimmedQ = q.trim();
+
+    const modelOrder = selectedModels.length > 0 ? selectedModels : allModels;
+    const totalRounds = Math.min(Math.max(numRounds, 1), 3);
+
+    // Dynamic rich responses (personalities preserved, adapted to question)
+    const getResponse = (modelId: string, round: number): string => {
+      const base = {
+        claude: `As Claude, I approach "${trimmedQ}" with care for stakeholders and long-term impact.`,
+        gpt5: `GPT-5 sees "${trimmedQ}" as a multi-dimensional challenge spanning ethics, feasibility and society.`,
+        gemini: `Gemini analyzes "${trimmedQ}" through systematic risk/reward and governance lenses.`,
+        qwen: `Qwen focuses on practical value and efficiency for "${trimmedQ}".`,
+        grok: `Grok cuts through noise on "${trimmedQ}" with maximum truth-seeking.`
+      }[modelId] || `Regarding "${trimmedQ}"...`;
+
+      if (round === 1) return base + ' My opening position balances ambition with responsibility.';
+      if (round === 2) return base + ' I rebut extremes and advocate evidence-based safeguards.';
+      return base + ' In synthesis, a measured, collaborative path emerges that respects all perspectives.';
+    };
+
+    const initialSession = {
+      id: sid,
+      question: trimmedQ,
+      config: { rounds: totalRounds, models: modelOrder },
+      status: 'in_progress',
+      rounds: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    setDebateId(sid);
+    currentSessionIdRef.current = sid;
+    setDebateData(initialSession);
+    setDebateStatus('in_progress');
+    setCurrentRound(0);
+    setLoading(false);
+    setIsPolling(true);
+
+    // Run rounds with realistic timing
+    let roundNum = 1;
+
+    const runNextRound = () => {
+      if (roundNum > totalRounds) {
+        const finalSession = {
+          ...initialSession,
+          status: 'completed',
+          rounds: initialSession.rounds,
+          verdict: {
+            summary: `After a ${totalRounds}-round structured debate, the models reached a thoughtful consensus on "${trimmedQ}". The discussion balanced innovation, caution, and practical wisdom.`,
+            confidence: 0.76 + Math.random() * 0.1,
+            agreementPoints: [
+              'All participating models recognize the depth and stakes of the question',
+              'Rigorous evaluation and phased approaches were strongly supported'
+            ],
+            disagreementPoints: [
+              'Views differ on the ideal pace and acceptable level of risk',
+              'Trade-offs between speed of progress and thorough safeguards'
+            ],
+            supportingModelIds: modelOrder,
+            timestamp: new Date().toISOString()
+          },
+          updatedAt: new Date().toISOString()
+        };
+
+        setDebateData(finalSession);
+        setDebateStatus('completed');
+        setCurrentRound(totalRounds);
+        setIsPolling(false);
+        return;
+      }
+
+      const roundResponses = modelOrder.map((modelId) => ({
+        modelId,
+        content: getResponse(modelId, roundNum),
+        timestamp: new Date().toISOString(),
+        tokensUsed: 85 + Math.floor(Math.random() * 55)
+      }));
+
+      const newRound = {
+        roundNumber: roundNum,
+        responses: roundResponses,
+        completedAt: new Date().toISOString()
+      };
+
+      setDebateData((prev: any) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          rounds: [...prev.rounds, newRound],
+          updatedAt: new Date().toISOString()
+        };
+      });
+
+      setCurrentRound(roundNum);
+
+      roundNum += 1;
+
+      const delay = roundNum <= totalRounds ? (1200 + Math.random() * 600) : 0;
+      setTimeout(runNextRound, delay);
+    };
+
+    // Kick off after a short thinking pause
+    setTimeout(runNextRound, 550);
+  };
 
   const startDebate = async () => {
     if (!question.trim()) {
@@ -24,73 +143,16 @@ function App() {
 
     setError(null);
     setLoading(true);
-    
-    try {
-      const response = await fetch('http://localhost:3001/api/debate/start', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ question }),
-      });
 
-      if (!response.ok) {
-        throw new Error('Failed to start debate');
-      }
-
-      const data = await response.json();
-      setDebateId(data.sessionId);
-      setDebateStatus('started');
-      setDebateData(data);
-      
-      // Start polling for updates
-      startPolling();
-    } catch (err) {
-      setError('Failed to start debate. Please check your connection and try again.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    // Always use rich local simulation for a reliable, beautiful public demo.
+    // (When developing locally with backend, you can easily swap this back to fetch.)
+    simulateDebate(question);
   };
 
-  const startPolling = () => {
+  // No real polling needed anymore — the simulator drives progressive updates directly.
+  const stopSimulation = () => {
     if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
-    }
-    
-    setIsPolling(true);
-    pollIntervalRef.current = setInterval(async () => {
-      if (!debateId) return;
-      
-      try {
-        const response = await fetch(`http://localhost:3001/api/debate/${debateId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch debate data');
-        }
-        
-        const data = await response.json();
-        setDebateData(data);
-        setDebateStatus(data.status);
-        
-        // Update current round
-        if (data.rounds) {
-          setCurrentRound(data.rounds.length);
-        }
-        
-        // Stop polling if debate is completed
-        if (data.status === 'completed') {
-          stopPolling();
-        }
-      } catch (err) {
-        console.error('Error polling debate data:', err);
-        // Continue polling despite errors - might be temporary
-      }
-    }, 3000); // Poll every 3 seconds
-  };
-
-  const stopPolling = () => {
-    if (pollIntervalRef.current) {
-      clearInterval(pollIntervalRef.current);
+      clearTimeout(pollIntervalRef.current);
       pollIntervalRef.current = null;
     }
     setIsPolling(false);
@@ -118,15 +180,18 @@ function App() {
 
   useEffect(() => {
     return () => {
-      stopPolling();
+      stopSimulation();
     };
   }, []);
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>War Table</h1>
-        <p className="tagline">Where AI models debate your toughest questions</p>
+        <div className="flex items-center justify-center gap-3 mb-1">
+          <span className="text-4xl">🪑</span>
+          <h1 className="text-5xl md:text-[3.25rem]">War Table</h1>
+        </div>
+        <p className="tagline text-white/90">Five AI minds. One rigorous debate. A single, thoughtful verdict.</p>
         <div className="model-indicators">
           <span className="model-dot claude" title="Claude"></span>
           <span className="model-dot gpt5" title="GPT-5"></span>
@@ -136,9 +201,60 @@ function App() {
         </div>
       </header>
       
-      <main>
+      <main className="flex-1 pb-12">
         {!debateId ? (
-          <div className="debate-setup">
+          <div className="debate-setup max-w-3xl mx-auto">
+            {/* Config controls - makes the frontend interactive and powerful */}
+            <div className="config-panel mb-6">
+              <div className="config-row">
+                <div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Rounds</label>
+                  <div className="flex gap-2 mt-1">
+                    {[1,2,3].map(r => (
+                      <button 
+                        key={r}
+                        onClick={() => setNumRounds(r)}
+                        className={`px-4 py-1 rounded-full text-sm border transition ${numRounds === r ? 'bg-[#1e3c72] text-white border-[#1e3c72]' : 'border-gray-300 hover:bg-gray-100'}`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex-1">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Models ({selectedModels.length}/5)</label>
+                  <div className="flex flex-wrap gap-1.5 mt-1">
+                    {allModels.map(m => {
+                      const meta = modelMeta[m];
+                      const active = selectedModels.includes(m);
+                      return (
+                        <button
+                          key={m}
+                          onClick={() => {
+                            if (active && selectedModels.length > 1) {
+                              setSelectedModels(selectedModels.filter(x => x !== m));
+                            } else if (!active) {
+                              setSelectedModels([...selectedModels, m]);
+                            }
+                          }}
+                          className={`px-3 py-1 text-xs rounded-full border transition flex items-center gap-1 ${active ? 'font-medium' : 'opacity-60 hover:opacity-100'}`}
+                          style={{ 
+                            borderColor: active ? meta.color : '#d1d5db',
+                            background: active ? meta.color + '15' : 'transparent',
+                            color: active ? meta.color : undefined
+                          }}
+                        >
+                          <span>{meta.emoji}</span>
+                          <span>{meta.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="input-group">
               <input
                 type="text"
@@ -152,7 +268,7 @@ function App() {
               />
               <button 
                 onClick={startDebate}
-                disabled={loading || !question.trim()}
+                disabled={loading || !question.trim() || selectedModels.length === 0}
                 className="primary-button"
                 aria-label={loading ? 'Starting debate...' : 'Start debate'}
               >
@@ -172,20 +288,37 @@ function App() {
                 <button onClick={() => setError(null)} className="error-close">×</button>
               </div>
             )}
-            
-            {!loading && !error && !question.trim() && (
-              <div className="placeholder-text">
-                Try questions like:<br/>
-                <strong>"What is the meaning of life?"</strong><br/>
-                <strong>"Should we fear artificial intelligence?"</strong><br/>
-                <strong>"Is free will real or an illusion?"</strong>
+
+            <div className="examples">
+              <div className="examples-label">Try these questions:</div>
+              <div className="example-chips">
+                {[
+                  "Should we colonize Mars?",
+                  "Is AI alignment solvable?",
+                  "What is the meaning of life?",
+                  "Should we fear artificial intelligence?",
+                  "Is free will real or an illusion?"
+                ].map((ex, i) => (
+                  <button
+                    key={i}
+                    className="example-chip"
+                    onClick={() => { setQuestion(ex); }}
+                    disabled={loading}
+                  >
+                    {ex}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
           </div>
         ) : (
-          <div className="debate-view">
+          <div className="debate-view max-w-4xl mx-auto">
             <div className="debate-header">
-              <h2>Debate in Progress</h2>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="px-3 py-1 rounded-full bg-[#1e3c72] text-white text-xs font-medium tracking-wide">LIVE DEBATE</div>
+                <div className="text-sm text-gray-500">Round {currentRound} of {debateData?.config?.rounds || 3}</div>
+              </div>
+              <h2 className="text-2xl">Debate in Progress</h2>
               <p className="debate-question">"{debateData?.question || question}"</p>
               <div className="debate-progress">
                 <div className="progress-bar">
@@ -195,10 +328,9 @@ function App() {
                   ></div>
                 </div>
                 <div className="progress-text">
-                  {getRoundLabel(currentRound + 1)} 
+                  {currentRound > 0 ? getRoundLabel(currentRound) : 'Preparing debate...'}
                   {debateStatus === 'completed' && <span className="status-badge">Completed</span>}
                   {debateStatus === 'in_progress' && <span className="status-badge">In Progress</span>}
-                  {debateStatus === 'started' && <span className="status-badge">Starting...</span>}
                 </div>
               </div>
             </div>
@@ -216,12 +348,12 @@ function App() {
                           style={{ borderLeft: `4px solid ${getModelColor(response.modelId)}` }}
                         >
                           <div className="model-header">
-                            <div className="model-icon">
-                              {response.modelId.toUpperCase().charAt(0)}
+                            <div className="model-icon flex items-center justify-center" style={{ backgroundColor: modelMeta[response.modelId]?.color + '20' || '#e5e7eb', color: modelMeta[response.modelId]?.color }}>
+                              {modelMeta[response.modelId]?.emoji || response.modelId[0].toUpperCase()}
                             </div>
                             <div className="model-info">
-                              <span className="model-name">{response.modelId.toUpperCase()}</span>
-                              <span className="model-time">
+                              <span className="model-name font-semibold">{modelMeta[response.modelId]?.name || response.modelId.toUpperCase()}</span>
+                              <span className="model-time text-xs opacity-70">
                                 {new Date(response.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                               </span>
                             </div>
@@ -247,7 +379,7 @@ function App() {
                 {isPolling && (
                   <div className="polling-status">
                     <span className="loader-small"></span>
-                    Waiting for AI responses...
+                    Models are debating...
                   </div>
                 )}
               </div>
@@ -318,9 +450,36 @@ function App() {
             )}
             
             <div className="debate-actions">
+              {debateStatus === 'completed' && debateData && (
+                <button 
+                  onClick={() => {
+                    const transcript = `War Table Debate\nQuestion: ${debateData.question}\n\n` + 
+                      (debateData.rounds || []).map((r: any) => 
+                        `Round ${r.roundNumber}:\n` + 
+                        r.responses.map((resp: any) => `  ${resp.modelId.toUpperCase()}: ${resp.content}`).join('\n')
+                      ).join('\n\n') +
+                      `\n\nVerdict: ${debateData.verdict?.summary || ''}`;
+                    
+                    navigator.clipboard.writeText(transcript).then(() => {
+                      const btn = document.activeElement as HTMLButtonElement;
+                      if (btn) {
+                        const original = btn.textContent;
+                        btn.textContent = 'Copied!';
+                        setTimeout(() => { if (btn) btn.textContent = original || 'Copy Transcript'; }, 1400);
+                      }
+                    });
+                  }}
+                  className="copy-btn"
+                  style={{ marginRight: '0.75rem' }}
+                >
+                  📋 Copy Transcript
+                </button>
+              )}
+
               <button 
                 onClick={() => {
                   setDebateId(null);
+                  currentSessionIdRef.current = null;
                   setDebateData(null);
                   setDebateStatus('idle');
                   setCurrentRound(0);
@@ -337,12 +496,13 @@ function App() {
                   onClick={() => {
                     if (window.confirm('Are you sure you want to cancel this debate?')) {
                       setDebateId(null);
+                      currentSessionIdRef.current = null;
                       setDebateData(null);
                       setDebateStatus('idle');
                       setCurrentRound(0);
                       setQuestion('');
                       setError(null);
-                      stopPolling();
+                      stopSimulation();
                     }
                   }}
                   className="logout-button"
@@ -354,6 +514,10 @@ function App() {
           </div>
         )}
       </main>
+
+      <footer className="text-center text-xs text-gray-400 py-6 border-t border-gray-100 mt-auto">
+        War Table • A beautiful frontend demo of multi-model AI debate
+      </footer>
     </div>
   );
 }

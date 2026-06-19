@@ -155,18 +155,35 @@ npm run lint  # Runs both frontend and backend linting
 
 ## 🚀 Deployment
 
-### Frontend (GitHub Pages)
-The frontend is automatically deployed to GitHub Pages via GitHub Actions:
-- Push to `main` branch triggers deployment
-- Available at: `https://nostalgicgarethdev.github.io/war-table/`
+### Frontend (GitHub Pages) — Recommended
+The beautiful, fully self-contained React frontend is automatically built and deployed:
+
+- Push to `main` → GitHub Actions builds `frontend/` and deploys `dist/` 
+- Live site: https://nostalgicgarethdev.github.io/war-table/
+- 100% static — works instantly with rich simulated debates (no backend required)
 - Workflow: `.github/workflows/deploy.yml`
 
-### Backend (Node.js Hosting)
-Deploy the built backend to any Node.js hosting service:
-- Recommended: Render, Railway, Fly.io, Vercel, AWS, etc.
-- Deploy the `./backend/build` directory
-- Set required environment variables
-- Ensure PORT matches your hosting service's expectations
+To deploy locally for testing:
+```bash
+cd frontend
+npm run build
+# Open the dist/ folder or use any static host (Netlify, Vercel, Pages, Surge, etc.)
+```
+
+### Full Stack (Local Development)
+```bash
+# Terminal 1
+cd backend && npm run dev
+
+# Terminal 2
+cd frontend && npm run dev
+```
+
+### Backend (Optional Production Hosting)
+If you want real AI model calls, deploy the backend separately (Render, Railway, Fly.io, etc.) and update the frontend to point at it.
+
+### Legacy
+Old pure-HTML demos live in `static-site/` and `simple-site/` (mostly historical).
 
 ## 📖 API Reference
 

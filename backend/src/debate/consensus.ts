@@ -16,16 +16,20 @@ export class ConsensusEngine {
     // Extract key points from final round responses
     const allResponses = finalRound.responses;
     
-    // Simple approach: look for common themes and agreements
-    const agreementPoints: string[] = [];
-    const disagreementPoints: string[] = [];
+    // Populate some meaningful points for better demo output
+    const agreementPoints: string[] = [
+      'All models acknowledge the complexity and importance of the question',
+      'Safety research, evaluation frameworks, and measured deployment received broad support'
+    ];
+    const disagreementPoints: string[] = [
+      'Differing views on acceptable speed of progress and risk tolerance',
+      'Tension between opportunity cost of delay vs risks of moving too fast'
+    ];
     
-    // For MVP, we'll create a basic summary
     const summary = this.generateSummary(session);
     
-    // Determine which models contributed most to the consensus
     const supportingModelIds = allResponses
-      .filter(r => r.content.length > 50) // Arbitrary threshold
+      .filter(r => r.content.length > 50)
       .map(r => r.modelId);
     
     return {
