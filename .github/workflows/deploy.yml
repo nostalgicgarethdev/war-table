@@ -21,19 +21,10 @@ jobs:
           cache: 'npm'
 
       - name: Install Frontend Dependencies
-        run: |
-          echo "Current directory: $(pwd)"
-          cd frontend
-          echo "Changed to frontend directory: $(pwd)"
-          ls -la package-lock.json
-          npm ci
+        run: npm ci --prefix frontend
 
       - name: Build Frontend
-        run: |
-          echo "Current directory: $(pwd)"
-          cd frontend
-          echo "Changed to frontend directory: $(pwd)"
-          npm run build
+        run: npm run build --prefix frontend
 
       - name: Create .nojekyll file
         run: touch frontend/dist/.nojekyll
