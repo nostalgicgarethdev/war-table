@@ -156,12 +156,14 @@ npm run lint  # Runs both frontend and backend linting
 ## 🚀 Deployment
 
 ### Frontend (GitHub Pages) — Recommended
-The beautiful, fully self-contained React frontend is automatically built and deployed:
+The beautiful, fully self-contained React frontend is automatically built and deployed using the official GitHub Pages action:
 
-- Push to `main` → GitHub Actions builds `frontend/` and deploys `dist/` 
+- Push to `main` (or manual dispatch) → GitHub Actions builds the React app and deploys the `dist/` folder
 - Live site: https://nostalgicgarethdev.github.io/war-table/
 - 100% static — works instantly with rich simulated debates (no backend required)
 - Workflow: `.github/workflows/deploy.yml`
+
+**Important:** In your repo, go to **Settings → Pages → Build and deployment → Source** and select **GitHub Actions** (not "Deploy from a branch").
 
 To deploy locally for testing:
 ```bash
