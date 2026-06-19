@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { DebateSession, DebateRound, ModelResponse, DebateConfig, DebateResponse } from '../types/debate';
-import { DebateStatus } from '../types/debate';
-import { ModelProvider } from '../models/provider';
-import { ConsensusEngine } from './consensus';
+import type { DebateSession, DebateRound, ModelResponse, DebateConfig, DebateResponse } from '../types/debate.js';
+import { DebateStatus } from '../types/debate.js';
+import { ModelProvider } from '../models/provider.js';
+import { ConsensusEngine } from './consensus.js';
 
 export class DebateOrchestrator {
   private sessions: Map<string, DebateSession> = new Map();

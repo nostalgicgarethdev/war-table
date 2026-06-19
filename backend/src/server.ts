@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import debateRoutes from './api/debate';
+import debateRoutes from './api/debate.js';
 
 const app = new Hono()
 
@@ -7,7 +7,7 @@ const app = new Hono()
 app.route('/api/debate', debateRoutes);
 
 app.get('/', (c) => {
-  return c.text('War Table API is running!');
+  return c.text('War Table API is running!')
 })
 
 app.get('/health', (c) => {
