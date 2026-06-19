@@ -32,14 +32,22 @@ jobs:
           cache: 'npm'
 
       - name: Install Frontend Dependencies
-        run: npm ci --prefix frontend
-        env:
-          CI: true
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -la
+          echo ""
+          echo "Trying npm ci with --prefix frontend:"
+          npm ci --prefix frontend
+          echo ""
+          echo "Contents of frontend/node_modules after install (if any):"
+          ls -la frontend/node_modules 2>/dev/null || echo "frontend/node_modules does not exist yet"
 
       - name: Build Frontend
-        run: npm run build --prefix frontend
-        env:
-          CI: true
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Trying npm run build with --prefix frontend:"
+          npm run build --prefix frontend
 
       - name: Create .nojekyll file
         run: touch frontend/dist/.nojekyll
