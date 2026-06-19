@@ -16,6 +16,28 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug: List root directory
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing root directory:"
+          ls -la
+
+      - name: Debug: List frontend directory
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing frontend directory:"
+          ls -la frontend/
+
+      - name: Debug: Check for package-lock.json in frontend
+        run: |
+          echo "Current directory: $(pwd)"
+          if [ -f "frontend/package-lock.json" ]; then
+            echo "FOUND: frontend/package-lock.json"
+            ls -la frontend/package-lock.json
+          else
+            echo "NOT FOUND: frontend/package-lock.json"
+          fi
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,11 +46,19 @@ jobs:
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing current directory:"
+          ls -la
+          npm ci
 
       - name: Build Frontend
         working-directory: ./frontend
-        run: npm run build
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing current directory:"
+          ls -la
+          npm run build
 
       - name: Create .nojekyll file
         run: touch frontend/dist/.nojekyll
