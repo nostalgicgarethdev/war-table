@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { DebateSession, DebateRound, DebateStatus, ModelResponse, DebateConfig } from '../types/debate';
+import type { DebateSession, DebateRound, ModelResponse, DebateConfig, DebateResponse } from '../types/debate';
+import { DebateStatus } from '../types/debate';
 import { ModelProvider } from '../models/provider';
 import { ConsensusEngine } from './consensus';
 
@@ -60,10 +61,11 @@ export class DebateOrchestrator {
     session.status = DebateStatus.IN_PROGRESS;
     session.updatedAt = new Date();
     
+    // Create round with proper typing for exactOptionalPropertyTypes
     const round: DebateRound = {
       roundNumber,
-      responses: [],
-      completedAt: undefined
+      responses: [] as DebateResponse[]
+      // completedAt is omitted initially (optional property)
     };
     
     // Get responses from each model for this round
@@ -72,7 +74,7 @@ export class DebateOrchestrator {
         const context = this.buildContext(session, roundNumber);
         const prompt = this.buildPrompt(session.question, roundNumber, context);
         
-        const response = await this.modelProvider.getResponse(
+        const response: ModelResponse = await this.modelProvider.getResponse(
           modelId,
           prompt,
           { temperature: 0.7, maxTokens: 1500 }
@@ -82,7 +84,7 @@ export class DebateOrchestrator {
           modelId,
           content: response.content,
           timestamp: new Date(),
-          tokensUsed: response.tokensUsed
+          tokensUsed: response.tokensUsed ?? 0
         });
       } catch (error) {
         console.error(`Error getting response from ${modelId}:`, error);
@@ -101,6 +103,7 @@ export class DebateOrchestrator {
     
     // Check if round is complete
     if (round.responses.length === session.config.models.length) {
+      // Now we can set completedAt since all responses are in
       round.completedAt = new Date();
       
       // If this was the final round, finalize the debate
@@ -123,8 +126,12 @@ export class DebateOrchestrator {
     
     let context = `Previous rounds summary:\n\n`;
     
-    for (let i = 0; i < Math.min(currentRound - 1, session.rounds.length); i++) {
+    const safeIndex = Math.min(currentRound - 1, session.rounds.length);
+    for (let i = 0; i < safeIndex; i++) {
       const round = session.rounds[i];
+      // Add null check to satisfy TypeScript
+      if (!round) continue;
+      
       context += `Round ${round.roundNumber}:\n`;
       
       for (const response of round.responses) {

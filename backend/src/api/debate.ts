@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import { DebateOrchestrator } from '../debate/orchestrator';
-import { DebateSession } from '../types/debate';
 
 const app = new Hono();
 const orchestrator = new DebateOrchestrator();

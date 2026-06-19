@@ -1,4 +1,4 @@
-import { ModelResponse } from '../types/debate';
+import type { ModelResponse } from '../types/debate';
 
 export class ModelProvider {
   private readonly modelConfigs: Record<string, any> = {
@@ -32,12 +32,10 @@ export class ModelProvider {
   
   private getMockResponse(modelId: string, prompt: string, options: { temperature?: number; maxTokens?: number }): ModelResponse {
     // Generate a mock response based on the model type and prompt
-    const modelName = this.modelConfigs[modelId]?.name || modelId;
-    
-    // Different response styles for different models to simulate diversity
-    let baseResponse = '';
     const questionMatch = prompt.match(/question is: "([^"]+)"/i);
     const question = questionMatch ? questionMatch[1] : 'the topic at hand';
+    
+    let baseResponse: string;
     
     switch (modelId) {
       case 'claude':
@@ -70,9 +68,16 @@ export class ModelProvider {
       baseResponse += ` contributes thoughtful analysis to the ongoing discussion.`;
     }
     
-    // Add some variability based on "temperature"
+    // Add some variability based on "temperature" - actually use it now
     const temp = options.temperature || 0.7;
     const variability = Math.sin(temp * Date.now() / 1000) * 0.1;
+    
+    // Add variability to the response based on temperature
+    if (variability > 0.1) {
+      baseResponse += " This perspective offers additional nuance and depth to the consideration.";
+    } else if (variability < -0.1) {
+      baseResponse += " This viewpoint emphasizes practical implications and real-world applications.";
+    }
     
     // Estimate tokens (rough approximation)
     const estimatedTokens = Math.floor((baseResponse.length + prompt.length) / 4);

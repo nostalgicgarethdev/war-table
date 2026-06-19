@@ -1,4 +1,4 @@
-import { DebateSession, DebateVerdict } from '../types/debate';
+import type { DebateSession, DebateVerdict } from '../types/debate';
 
 export class ConsensusEngine {
   /**
