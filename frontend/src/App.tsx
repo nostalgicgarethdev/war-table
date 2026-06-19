@@ -198,9 +198,9 @@ function App() {
         </div>
       </header>
       
-      <main className="flex-1 pb-12">
+      <main className="flex-1 pb-16">
         {!debateId ? (
-          <div className="debate-setup max-w-3xl mx-auto">
+          <div className="debate-setup max-w-2xl mx-auto">
             {/* Config controls - makes the frontend interactive and powerful */}
             <div className="config-panel mb-6">
               <div className="config-row">
@@ -257,24 +257,20 @@ function App() {
                 type="text"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="What question should the AI models debate?"
+                placeholder="Ask anything the AIs should debate…"
                 aria-label="Debate question input"
                 onKeyDown={(e) => e.key === 'Enter' && startDebate()}
                 disabled={loading}
                 autoFocus
+                className="text-lg"
               />
               <button 
                 onClick={startDebate}
                 disabled={loading || !question.trim() || selectedModels.length === 0}
-                className="primary-button"
+                className="primary-button text-base"
                 aria-label={loading ? 'Starting debate...' : 'Start debate'}
               >
-                {loading ? (
-                  <>
-                    <span className="loader-small"></span>
-                    Starting debate...
-                  </>
-                ) : 'Start Debate'}
+                {loading ? 'Thinking…' : 'Start Debate'}
               </button>
             </div>
             
@@ -311,11 +307,11 @@ function App() {
         ) : (
           <div className="debate-view max-w-4xl mx-auto">
             <div className="debate-header">
-              <div className="flex items-center gap-2 mb-2 text-sm">
-                <span className="px-2.5 py-0.5 rounded-full bg-[var(--accent)]/20 text-[var(--accent)] text-xs font-medium tracking-[0.5px]">IN PROGRESS</span>
-                <span className="text-[var(--text-muted)]">Round {currentRound} of {debateData?.config?.rounds || 3}</span>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="inline-block px-3 py-0.5 text-xs font-semibold tracking-[1px] bg-[var(--accent)]/10 text-[var(--accent)] rounded-full">LIVE</span>
+                <span className="text-sm text-[var(--text-muted)] font-mono">ROUND {currentRound} / {debateData?.config?.rounds || 3}</span>
               </div>
-              <h2 className="text-xl font-semibold tracking-tight">Debate in Progress</h2>
+              <h2 className="text-2xl font-semibold tracking-tighter">The agents are debating</h2>
               <p className="debate-question">"{debateData?.question || question}"</p>
               <div className="debate-progress">
                 <div className="progress-bar">
@@ -512,8 +508,8 @@ function App() {
         )}
       </main>
 
-      <footer className="text-center text-xs text-gray-400 py-6 border-t border-gray-100 mt-auto">
-        War Table • A beautiful frontend demo of multi-model AI debate
+      <footer className="mt-auto py-8 text-center text-[10px] tracking-[1.5px] text-[var(--text-muted)] opacity-60">
+        WARTABLE AGENTS  •  5 AIs. ONE DECISION.
       </footer>
     </div>
   );
