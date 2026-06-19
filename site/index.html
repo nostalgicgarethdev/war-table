@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>War Table • 5 AIs. One Decision.</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    
+    :root {
+      --gold: #c5a46e;
+    }
+    
+    body {
+      font-family: 'Inter', system_ui, sans-serif;
+    }
+    
+    .title-font {
+      font-family: 'Space Grotesk', system_ui, sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .glass {
+      background: rgba(10, 12, 20, 0.65);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(197, 164, 110, 0.15);
+    }
+
+    .war-table {
+      background: linear-gradient(145deg, #0a0c14, #11131f);
+      border: 2px solid #c5a46e;
+      box-shadow: 0 0 30px rgba(197, 164, 110, 0.15),
+                  inset 0 10px 20px rgba(0,0,0,0.6);
+    }
+
+    .agent-card {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255,255,255, 0.03);
+      border: 1px solid rgba(255,255,255, 0.06);
+    }
+
+    .agent-card:hover {
+      transform: translateY(-2px);
+      border-color: #c5a46e;
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    .section-header {
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .neon-red {
+      text-shadow: 0 0 10px rgb(200 16 46 / 0.5);
+    }
+
+    .debate-container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .model-badge {
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      font-weight: 600;
+      letter-spacing: -.5px;
+    }
+  </style>
+</head>
+<body class="bg-[#05070f] text-[#e8e4d9] min-h-screen overflow-x-hidden">
+  <!-- Background -->
+  <div class="fixed inset-0 bg-cover bg-center bg-no-repeat" 
+       style="background-image: url('wartable-agents-bg.png'); background-position: center 30%; filter: brightness(0.85);">
+    <div class="absolute inset-0 bg-gradient-to-b from-[#05070f]/80 via-[#05070f]/70 to-[#05070f]/85"></div>
+  </div>
+
+  <div class="relative z-10">
+    <!-- Header -->
+    <div class="max-w-5xl mx-auto px-6 pt-8 pb-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-x-3">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#c5a46e] to-[#8a6640] flex items-center justify-center">
+            <i class="fa-solid fa-chess-rook text-[#05070f] text-xl"></i>
+          </div>
+          <div>
+            <div class="font-bold text-2xl tracking-tighter">WAR TABLE</div>
+            <div class="text-[10px] text-[#c5a46e] -mt-1 tracking-[3px]">EST 2026</div>
+          </div>
+        </div>
+        
+        <div class="hidden md:flex items-center gap-x-2 text-xs uppercase tracking-[2px] text-[#c5a46e]">
+          <div class="px-3 py-1 rounded-full bg-white/5 border border-white/10">5 AGENTS</div>
+          <div class="px-3 py-1 rounded-full bg-white/5 border border-white/10">1 VERDICT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto px-6 pb-16">
+      <!-- Hero -->
+      <div class="text-center mb-10">
+        <h1 class="text-[92px] md:text-[110px] font-black tracking-[-8.5px] leading-[0.88] text-white">WARTABLE</h1>
+        <h2 class="text-[64px] md:text-[76px] font-medium tracking-[1.5px] -mt-6 text-[#c5a46e]">AGENTS</h2>
+        <p class="text-xl md:text-2xl text-white/70 tracking-tight max-w-md mx-auto mt-1">5 AIs. One Decision.</p>
+      </div>
+
+      <!-- Setup -->
+      <div id="setup" class="max-w-xl mx-auto">
+        <div class="glass border border-[#c5a46e]/20 rounded-3xl p-8 mb-8">
+          <!-- Config -->
+          <div class="grid grid-cols-2 gap-6 mb-8">
+            <div>
+              <div class="text-xs tracking-[2px] text-[#c5a46e] mb-2 font-medium">ROUNDS</div>
+              <div class="flex gap-2" id="rounds-selector">
+                <button onclick="setRounds(1)" class="round-btn flex-1 py-2 rounded-2xl border border-white/20 text-sm active">1</button>
+                <button onclick="setRounds(2)" class="round-btn flex-1 py-2 rounded-2xl border border-white/20 text-sm">2</button>
+                <button onclick="setRounds(3)" class="round-btn flex-1 py-2 rounded-2xl border border-[#c5a46e] text-sm bg-[#c5a46e]/10 text-[#c5a46e]">3</button>
+              </div>
+            </div>
+            
+            <div>
+              <div class="text-xs tracking-[2px] text-[#c5a46e] mb-2 font-medium">AT THE TABLE</div>
+              <div class="flex flex-wrap gap-1.5" id="models-selector">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Input -->
+          <div>
+            <div class="text-xs tracking-[2px] text-[#c5a46e] mb-2 font-medium">YOUR QUESTION</div>
+            <div class="relative">
+              <input id="question-input" 
+                     type="text" 
+                     placeholder="What should the agents debate?"
+                     class="w-full bg-black/40 border border-[#c5a46e]/30 focus:border-[#c5a46e] rounded-2xl py-[17px] px-6 text-lg placeholder:text-white/30 focus:outline-none transition pr-32">
+              <button onclick="startDebate()" 
+                      class="absolute right-2 top-2 bg-[#c5a46e] hover:bg-[#d4b77e] text-[#05070f] font-semibold px-7 py-3 rounded-2xl text-sm tracking-widest transition active:scale-95">
+                DEBATE
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <div class="text-white/40 text-xs tracking-widest mb-2">SUGGESTED QUESTIONS</div>
+          <div class="flex flex-wrap justify-center gap-2">
+            <button onclick="useSuggestion(this)" class="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition">Should we colonize Mars?</button>
+            <button onclick="useSuggestion(this)" class="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition">Is AI alignment solvable?</button>
+            <button onclick="useSuggestion(this)" class="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition">What is the meaning of life?</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="results" class="hidden max-w-4xl mx-auto mt-8">
+        <div class="text-center mb-6">
+          <div class="inline-flex items-center gap-x-2 px-4 py-1 bg-[#c5a46e]/10 border border-[#c5a46e]/30 text-[#c5a46e] text-xs tracking-[1px] rounded-3xl mb-2">
+            <i class="fa-solid fa-gavel"></i> 
+            <span>THE TABLE HAS SPOKEN</span>
+          </div>
+          <div id="question-display" class="text-2xl font-light max-w-2xl mx-auto text-white/90"></div>
+        </div>
+
+        <!-- Rounds -->
+        <div id="rounds-container" class="space-y-5">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Verdict -->
+        <div id="verdict-container" class="mt-8 hidden">
+          <div class="glass border border-[#c5a46e]/30 rounded-3xl p-7">
+            <div class="flex items-center gap-x-2 mb-4">
+              <div class="text-[#c5a46e]">
+                <i class="fa-solid fa-gavel text-xl"></i>
+              </div>
+              <div class="uppercase tracking-[2px] text-sm font-medium text-[#c5a46e]">The Final Verdict</div>
+            </div>
+            <div id="verdict-text" class="text-[15px] leading-relaxed text-[#e8e4d9]"></div>
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-center gap-3">
+          <button onclick="copyTranscript()" 
+                  class="flex items-center gap-x-2 px-5 py-2.5 text-sm border border-white/20 hover:bg-white/5 rounded-2xl transition">
+            <i class="fa-solid fa-copy"></i>
+            <span>Copy Transcript</span>
+          </button>
+          <button onclick="resetDebate()" 
+                  class="flex items-center gap-x-2 px-5 py-2.5 text-sm bg-white text-black font-medium rounded-2xl hover:bg-white/90 transition">
+            <span>New Debate</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function initTailwind() {
+      document.documentElement.style.setProperty('--accent', '#c5a46e');
+    }
+    
+    const models = [
+      { id: 'claude', name: 'Claude', color: '#1e3c72', emoji: '🧠' },
+      { id: 'gpt5', name: 'GPT-5', color: '#10b981', emoji: '📊' },
+      { id: 'gemini', name: 'Gemini', color: '#f59e0b', emoji: '🔭' },
+      { id: 'qwen', name: 'Qwen', color: '#8b5cf6', emoji: '⚙️' },
+      { id: 'grok', name: 'Grok', color: '#ef4444', emoji: '🚀' }
+    ];
+    
+    let currentRounds = 3;
+    let currentModels = models.map(m => m.id);
+    
+    function setRounds(rounds) {
+      currentRounds = rounds;
+      document.querySelectorAll('#rounds-selector button').forEach((btn, i) => {
+        if (i + 1 === rounds) {
+          btn.classList.add('bg-[#c5a46e]', 'text-black', 'border-[#c5a46e]');
+          btn.classList.remove('border-white/20');
+        } else {
+          btn.classList.remove('bg-[#c5a46e]', 'text-black', 'border-[#c5a46e]');
+          btn.classList.add('border-white/20');
+        }
+      });
+    }
+    
+    function initModels() {
+      const container = document.getElementById('models-selector');
+      container.innerHTML = '';
+      
+      models.forEach(model => {
+        const btn = document.createElement('button');
+        btn.className = `model-pill px-3 py-1 text-xs rounded-full border transition flex items-center gap-1.5 border-white/20`;
+        btn.innerHTML = `
+          <span>${model.emoji}</span>
+          <span>${model.name}</span>
+        `;
+        btn.onclick = () => toggleModel(model.id, btn);
+        container.appendChild(btn);
+      });
+    }
+    
+    function toggleModel(id, btn) {
+      const index = currentModels.indexOf(id);
+      if (index > -1 && currentModels.length > 1) {
+        currentModels.splice(index, 1);
+        btn.classList.remove('border-[#c5a46e]', 'bg-[#c5a46e]/10');
+      } else if (index === -1) {
+        currentModels.push(id);
+        btn.classList.add('border-[#c5a46e]', 'bg-[#c5a46e]/10');
+      }
+    }
+    
+    function useSuggestion(el) {
+      document.getElementById('question-input').value = el.textContent;
+      document.getElementById('question-input').focus();
+    }
+    
+    function startDebate() {
+      const input = document.getElementById('question-input');
+      const question = input.value.trim();
+      
+      if (!question || currentModels.length === 0) {
+        alert("Please enter a question and select at least one agent.");
+        return;
+      }
+      
+      document.getElementById('setup').classList.add('hidden');
+      document.getElementById('results').classList.remove('hidden');
+      
+      const roundsContainer = document.getElementById('rounds-container');
+      roundsContainer.innerHTML = '';
+      document.getElementById('verdict-container').classList.add('hidden');
+      
+      // Display question
+      document.getElementById('question-display').innerHTML = `"${question}"`;
+      
+      // Run simulation
+      runStaticSimulation(question, currentRounds, currentModels, roundsContainer);
+    }
+    
+    function runStaticSimulation(question, totalRounds, selectedModels, container) {
+      const modelOrder = selectedModels;
+      
+      const getResponse = (modelId, round) => {
+        const base = {
+          claude: `As Claude, I approach "${question}" with care for stakeholders and long-term impact.`,
+          gpt5: `GPT-5 sees "${question}" as a multi-dimensional challenge spanning ethics, feasibility and society.`,
+          gemini: `Gemini analyzes "${question}" through systematic risk/reward and governance lenses.`,
+          qwen: `Qwen focuses on practical value and efficiency for "${question}".`,
+          grok: `Grok cuts through noise on "${question}" with maximum truth-seeking.`
+        }[modelId] || `Regarding "${question}"...`;
+        
+        if (round === 1) return base + ' My opening position balances ambition with responsibility.';
+        if (round === 2) return base + ' I rebut extremes and advocate evidence-based safeguards.';
+        return base + ' In synthesis, a measured, collaborative path emerges that respects all perspectives.';
+      };
+      
+      let currentRound = 1;
+      
+      function renderRound(roundNum) {
+        const roundDiv = document.createElement('div');
+        roundDiv.className = 'glass border border-white/10 rounded-3xl p-6';
+        roundDiv.innerHTML = `
+          <div class="flex items-center gap-x-3 mb-4">
+            <div class="px-3 py-1 text-xs font-medium tracking-widest bg-white/10 rounded-2xl w-fit">ROUND ${roundNum}</div>
+            <div class="text-xs text-white/40">${roundNum === 1 ? 'OPENING STATEMENTS' : roundNum === 2 ? 'REBUTTALS' : 'SYNTHESIS'}</div>
+          </div>
+          <div class="space-y-4" id="round-${roundNum}"></div>
+        `;
+        container.appendChild(roundDiv);
+        
+        const responsesDiv = roundDiv.querySelector(`#round-${roundNum}`);
+        
+        modelOrder.forEach((modelId, idx) => {
+          setTimeout(() => {
+            const resp = getResponse(modelId, roundNum);
+            const model = models.find(m => m.id === modelId);
+            
+            const card = document.createElement('div');
+            card.className = `response-card p-5 rounded-2xl border-l-[5px]`;
+            card.style.borderLeftColor = model.color;
+            card.innerHTML = `
+              <div class="flex items-center gap-x-3 mb-3">
+                <span class="font-semibold text-lg" style="color: ${model.color}">${model.name}</span>
+                <span class="text-xs px-2 py-px bg-white/5 rounded">Agent</span>
+              </div>
+              <div class="text-[15px] leading-relaxed text-[#e8e4d9]">
+                ${resp}
+              </div>
+            `;
+            responsesDiv.appendChild(card);
+          }, idx * 420);
+        });
+        
+        if (roundNum < totalRounds) {
+          setTimeout(() => {
+            currentRound = roundNum + 1;
+            renderRound(currentRound);
+          }, 1800);
+        } else {
+          // Final verdict
+          setTimeout(() => {
+            showVerdict(question, modelOrder);
+          }, 2200);
+        }
+      }
+      
+      renderRound(1);
+    }
+    
+    function showVerdict(question, modelOrder) {
+      const verdictDiv = document.getElementById('verdict-container');
+      verdictDiv.classList.remove('hidden');
+      
+      const summary = `After a structured debate, the models converged on a thoughtful consensus regarding "${question}". The discussion balanced innovation with responsibility, evidence with intuition.`;
+      
+      document.getElementById('verdict-text').innerHTML = summary;
+    }
+    
+    function copyTranscript() {
+      const question = document.getElementById('question-display').textContent;
+      let text = `War Table Debate\n${question}\n\n`;
+      
+      document.querySelectorAll('.debate-round').forEach((roundEl, i) => {
+        text += `Round ${i + 1}\n`;
+        roundEl.querySelectorAll('.response-card').forEach(card => {
+          const name = card.querySelector('.font-semibold').textContent;
+          const content = card.querySelector('.text-\\[15px\\]').textContent;
+          text += `  ${name}: ${content}\n`;
+        });
+        text += '\n';
+      });
+      
+      const verdict = document.getElementById('verdict-text')?.textContent || '';
+      if (verdict) text += `Verdict: ${verdict}`;
+      
+      navigator.clipboard.writeText(text.trim()).then(() => {
+        const original = event.currentTarget?.textContent;
+        const btns = document.querySelectorAll('.debate-actions button');
+        if (btns.length) {
+          const btn = btns[0];
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => btn.textContent = orig, 1600);
+        }
+      });
+    }
+    
+    function resetDebate() {
+      document.getElementById('setup').classList.remove('hidden');
+      document.getElementById('results').classList.add('hidden');
+      document.getElementById('rounds-container').innerHTML = '';
+      document.getElementById('verdict-container').classList.add('hidden');
+      document.getElementById('question-input').value = '';
+    }
+    
+    function init() {
+      initTailwind();
+      
+      // Default rounds
+      setRounds(3);
+      
+      // Init model buttons
+      const modelsContainer = document.getElementById('models-selector');
+      modelsContainer.innerHTML = '';
+      models.forEach(model => {
+        const btn = document.createElement('button');
+        btn.className = `px-3 py-1 text-xs rounded-full border transition flex items-center gap-1.5 border-white/20 model-pill active`;
+        btn.innerHTML = `<span>${model.emoji}</span> <span>${model.name}</span>`;
+        btn.onclick = () => {
+          // toggle logic
+          if (btn.classList.contains('active') && document.querySelectorAll('#models-selector button.active').length > 1) {
+            btn.classList.remove('active', 'border-[#c5a46e]', 'bg-[#c5a46e]/10');
+          } else {
+            btn.classList.add('active', 'border-[#c5a46e]', 'bg-[#c5a46e]/10');
+          }
+        };
+        modelsContainer.appendChild(btn);
+      });
+      
+      // Keyboard support
+      document.addEventListener('keydown', function(e) {
+        if (e.key === '/' && document.activeElement.tagName === "BODY") {
+          e.preventDefault();
+          document.getElementById('question-input').focus();
+        }
+      });
+      
+      // Auto focus
+      setTimeout(() => {
+        const input = document.getElementById('question-input');
+        if (input) input.focus();
+      }, 1200);
+    }
+    
+    window.onload = init;
+    
+    // Expose for console fun
+    window.WarTable = { start: () => document.getElementById('question-input').focus() };
+  </script>
+</body>
+</html>
