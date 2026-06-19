@@ -90,6 +90,13 @@
             <div class="font-bold text-2xl tracking-tighter">WAR TABLE</div>
             <div class="text-[10px] text-[#c5a46e] -mt-1 tracking-[3px]">EST 2026</div>
           </div>
+          <div class="ml-auto text-xs">
+            <a href="https://pump.fun/9MjHBVmtDh8HiFGtcoUtMqd39NB9yyumQ7qnGxyXpump" target="_blank" 
+               class="flex items-center gap-x-1.5 px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[#c5a46e] font-mono text-[10px] transition">
+              <i class="fa-solid fa-link text-xs"></i>
+              <span>9MjHBVmtDh8HiFGtcoUtMqd39NB9yyumQ7qnGxyXpump</span>
+            </a>
+          </div>
         </div>
         
         <div class="hidden md:flex items-center gap-x-2 text-xs uppercase tracking-[2px] text-[#c5a46e]">
@@ -288,17 +295,102 @@
       const modelOrder = selectedModels;
       
       const getResponse = (modelId, round) => {
-        const base = {
-          claude: `As Claude, I approach "${question}" with care for stakeholders and long-term impact.`,
-          gpt5: `GPT-5 sees "${question}" as a multi-dimensional challenge spanning ethics, feasibility and society.`,
-          gemini: `Gemini analyzes "${question}" through systematic risk/reward and governance lenses.`,
-          qwen: `Qwen focuses on practical value and efficiency for "${question}".`,
-          grok: `Grok cuts through noise on "${question}" with maximum truth-seeking.`
-        }[modelId] || `Regarding "${question}"...`;
+        const variations = {
+          claude: {
+            1: [
+              `As Claude, I approach "${question}" with care for stakeholders and long-term impact. We must weigh ethics heavily here.`,
+              `Claude here: "${question}" requires deep consideration of human values and potential harms. Caution is key.`,
+              `My take as Claude on "${question}": balanced analysis shows risks to societal harmony that can't be ignored.`
+            ],
+            2: [
+              `Pushing back on overly optimistic views — "${question}" demands robust safeguards; rushing could erode trust.`,
+              `I must rebut extremes: the evidence for "${question}" points to needing iterative testing, not haste or halt.`,
+              `Countering my peers: while innovation matters, "${question}" risks human values without careful alignment.`
+            ],
+            3: [
+              `Synthesizing, there's agreement on measured progress for "${question}", with tensions on pace but common ground in transparency.`,
+              `After debate, a collaborative path for "${question}" emerges that balances ambition and responsibility across views.`,
+              `The consensus: "${question}" benefits from value-aligned development, though guardrails remain debated.`
+            ]
+          },
+          gpt5: {
+            1: [
+              `GPT-5 sees "${question}" as a multi-dimensional challenge spanning ethics, feasibility and society. Portfolio approach recommended.`,
+              `From GPT-5: "${question}" involves technical, economic and ethical facets. We need phased exploration with oversight.`,
+              `Comprehensive view: "${question}" requires balancing opportunity costs with alignment research across scenarios.`
+            ],
+            2: [
+              `While respecting caution, excessive conservatism on "${question}" risks missing transformative gains. History favors engagement.`,
+              `Rebutting: data from past tech shifts shows proactive strategies for "${question}" outperform resistance.`,
+              `Pushing back: over-hedging on "${question}" cedes ground; we must engage boldly with safeguards.`
+            ],
+            3: [
+              `Strongest path for "${question}": ambitious research paired with monitored deployment and coordination to capture benefits.`,
+              `Synthesis: "${question}" thrives with continuous evaluation, international standards and phased rollouts.`,
+              `Integrating perspectives: "${question}" demands rigorous testing alongside innovation to mitigate concerns.`
+            ]
+          },
+          gemini: {
+            1: [
+              `Gemini analyzes "${question}" through systematic risk/reward and governance lenses. Empirical milestones matter most.`,
+              `Analyzing "${question}": key variables include capability timelines and alignment difficulty. Data-driven checkpoints essential.`,
+              `Systematic take: "${question}" reveals governance readiness gaps; prioritize falsifiable progress metrics.`
+            ],
+            2: [
+              `Some arguments overweight speculative risks for "${question}" while underweighting ongoing safety work. Focus on measurable tests.`,
+              `Rebuttal: tail risks for "${question}" are real but coordination research is advancing; avoid paralysis by analysis.`,
+              `Countering: over-caution on "${question}" ignores concrete advancements; empirical validation should guide.`
+            ],
+            3: [
+              `Pattern from debate: evidence-driven checkpoints for "${question}" with broad agreement on rigorous evaluation.`,
+              `Across views: "${question}" favors measurable thresholds before advancing, despite pace disagreements.`,
+              `Clear synthesis: "${question}" needs falsifiable milestones balancing ambition and caution.`
+            ]
+          },
+          qwen: {
+            1: [
+              `Qwen focuses on practical value and efficiency for "${question}". Pursue targeted apps with parallel safety investment.`,
+              `Practical angle on "${question}": clear upside in contained areas warrants action, while avoiding hype or freeze.`,
+              `Efficiency lens: "${question}" calls for actionable roadmaps with explicit criteria, not abstract debates.`
+            ],
+            2: [
+              `Blanket optimism ignores engineering realities of "${question}"; blanket caution wastes resources. Build, measure, iterate.`,
+              `Pragmatic middle: for "${question}", explicit success criteria and off-ramps beat extremes.`,
+              `Rebuttal: "${question}" benefits from efficiency — targeted progress with clear metrics over ideology.`
+            ],
+            3: [
+              `Consensus favors actionable roadmaps for "${question}" guided by measurable outcomes and efficiency.`,
+              `Synthesis: "${question}" needs off-ramps and criteria; efficiency should guide alongside principles.`,
+              `Practical verdict: "${question}" advances via build-measure-iterate with explicit success definitions.`
+            ]
+          },
+          grok: {
+            1: [
+              `Grok cuts through noise on "${question}" with maximum truth-seeking. Embrace curiosity even if uncomfortable.`,
+              `Direct take: "${question}" is exactly where conventional wisdom fails. Universe doesn't care about comfort.`,
+              `Unconventional view: conventional thinking on "${question}" is flawed; seek truth over comfort.`
+            ],
+            2: [
+              `Many rebuttals on "${question}" feel overly hedged. History shows perfect guarantees are rare upfront.`,
+              `Pushing: over-caution on "${question}" risks ceding future to less careful actors. Boldness has costs too.`,
+              `Rebuttal: hedging on "${question}" ignores that transformative tech rarely arrives sanitized.`
+            ],
+            3: [
+              `Models agree "${question}" matters but diverge on risk tolerance. Bold path acknowledges uncertainty without paralysis.`,
+              `Truth-seeking synthesis: "${question}" requires refusing paralysis despite real uncertainty.`,
+              `Final: "${question}" needs the path that accepts uncertainty but refuses to be frozen by it.`
+            ]
+          }
+        };
         
-        if (round === 1) return base + ' My opening position balances ambition with responsibility.';
-        if (round === 2) return base + ' I rebut extremes and advocate evidence-based safeguards.';
-        return base + ' In synthesis, a measured, collaborative path emerges that respects all perspectives.';
+        const options = variations[modelId]?.[round] || variations[modelId]?.[1] || [`Regarding "${question}"...`];
+        const base = options[Math.floor(Math.random() * options.length)];
+        
+        // Add slight variation based on question length or random
+        if (question.length > 50 && Math.random() > 0.5) {
+          return base + ' This warrants deeper scrutiny across multiple lenses.';
+        }
+        return base;
       };
       
       let currentRound = 1;
