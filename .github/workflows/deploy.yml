@@ -16,27 +16,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Debug: List root directory
+      - name: Show directory structure
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing root directory:"
+          echo "=== SHOWING REPOSITORY STRUCTURE ==="
+          pwd
           ls -la
-
-      - name: Debug: List frontend directory
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing frontend directory:"
+          echo ""
+          echo "=== FRONTEND DIRECTORY ==="
           ls -la frontend/
-
-      - name: Debug: Check for package-lock.json in frontend
-        run: |
-          echo "Current directory: $(pwd)"
+          echo ""
+          echo "=== CHECKING FOR PACKAGE-LOCK.JSON ==="
           if [ -f "frontend/package-lock.json" ]; then
-            echo "FOUND: frontend/package-lock.json"
+            echo "✓ FOUND: frontend/package-lock.json"
             ls -la frontend/package-lock.json
           else
-            echo "NOT FOUND: frontend/package-lock.json"
+            echo "✗ NOT FOUND: frontend/package-lock.json"
           fi
+          echo ""
+          echo "=== CONTENTS OF FRONTEND/ ==="
+          ls -la frontend/
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -45,19 +43,23 @@ jobs:
           cache: 'npm'
 
       - name: Install Frontend Dependencies
-        working-directory: ./frontend
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing current directory:"
+          echo "=== INSTALLING DEPENDENCIES ==="
+          pwd
           ls -la
+          cd frontend
+          echo "Changed to frontend directory:"
+          pwd
+          ls -la package-lock.json
           npm ci
 
       - name: Build Frontend
-        working-directory: ./frontend
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing current directory:"
-          ls -la
+          echo "=== BUILDING FRONTEND ==="
+          pwd
+          cd frontend
+          echo "Changed to frontend directory:"
+          pwd
           npm run build
 
       - name: Create .nojekyll file
