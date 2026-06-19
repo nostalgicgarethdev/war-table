@@ -1,4 +1,4 @@
-name: Deploy Static Site to GitHub Pages
+name: Deploy Simple Site to GitHub Pages
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./static-site
+          publish_dir: ./simple-site
           publish_branch: gh-pages
           force_orphan: true
           enable_jekyll: false
