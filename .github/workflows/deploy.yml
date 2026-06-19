@@ -14,6 +14,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug directory structure
+        run: |
+          echo "Repository root:"
+          ls -la
+          echo ""
+          echo "Frontend directory:"
+          ls -la frontend/
+          echo ""
+          echo "Checking for package-lock.json in frontend:"
+          ls -la frontend/package-lock.json || echo "NOT FOUND"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -21,12 +32,17 @@ jobs:
           cache: 'npm'
 
       - name: Install Frontend Dependencies
-        working-directory: ${{ github.workspace }}/frontend
-        run: npm ci
+        run: |
+          cd frontend
+          echo "Current directory: $(pwd)"
+          ls -la package-lock.json || echo "package-lock.json NOT found in $(pwd)"
+          npm ci
 
       - name: Build Frontend
-        working-directory: ${{ github.workspace }}/frontend
-        run: npm run build
+        run: |
+          cd frontend
+          echo "Current directory: $(pwd)"
+          npm run build
 
       - name: Create .nojekyll file
         run: touch frontend/dist/.nojekyll
