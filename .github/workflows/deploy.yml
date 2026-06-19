@@ -16,26 +16,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Show directory structure
-        run: |
-          echo "=== SHOWING REPOSITORY STRUCTURE ==="
-          pwd
-          ls -la
-          echo ""
-          echo "=== FRONTEND DIRECTORY ==="
-          ls -la frontend/
-          echo ""
-          echo "=== CHECKING FOR PACKAGE-LOCK.JSON ==="
-          if [ -f "frontend/package-lock.json" ]; then
-            echo "✓ FOUND: frontend/package-lock.json"
-            ls -la frontend/package-lock.json
-          else
-            echo "✗ NOT FOUND: frontend/package-lock.json"
-          fi
-          echo ""
-          echo "=== CONTENTS OF FRONTEND/ ==="
-          ls -la frontend/
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -44,21 +24,21 @@ jobs:
 
       - name: Install Frontend Dependencies
         run: |
-          echo "=== INSTALLING DEPENDENCIES ==="
-          pwd
-          ls -la
-          cd frontend
-          echo "Changed to frontend directory:"
+          echo "GitHub workspace: $GITHUB_WORKSPACE"
+          echo "Listing frontend directory:"
+          ls -la "$GITHUB_WORKSPACE/frontend/"
+          echo "Checking package-lock.json:"
+          ls -la "$GITHUB_WORKSPACE/frontend/package-lock.json"
+          echo "Changing to frontend directory and installing..."
+          cd "$GITHUB_WORKSPACE/frontend"
           pwd
           ls -la package-lock.json
           npm ci
 
       - name: Build Frontend
         run: |
-          echo "=== BUILDING FRONTEND ==="
-          pwd
-          cd frontend
-          echo "Changed to frontend directory:"
+          echo "Building frontend..."
+          cd "$GITHUB_WORKSPACE/frontend"
           pwd
           npm run build
 
