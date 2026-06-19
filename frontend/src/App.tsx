@@ -189,7 +189,7 @@ function App() {
       <header className="App-header">
         <h1 className="text-[2.65rem] md:text-[2.85rem] tracking-tighter">War Table</h1>
         <a href="https://pump.fun/9MjHBVmtDh8HiFGtcoUtMqd39NB9yyumQ7qnGxyXpump" target="_blank" 
-           className="ml-4 px-3 py-1 bg-white/5 hover:bg-white/10 border border-[#c5a46e]/50 rounded-xl text-sm font-mono text-[#c5a46e] hover:underline tracking-wider transition">9MjHBVmtDh8HiFGtcoUtMqd39NB9yyumQ7qnGxyXpump</a>
+           className="ml-4 px-5 py-3 bg-white/5 hover:bg-white/10 border-2 border-[#c5a46e]/70 rounded-2xl text-lg font-semibold font-mono text-[#c5a46e] hover:underline tracking-wider transition hover:scale-105 shadow-lg">9MjHBVmtDh8HiFGtcoUtMqd39NB9yyumQ7qnGxyXpump</a>
         <p className="tagline text-white/90">Five AI minds. One rigorous debate. A single, thoughtful verdict.</p>
         <div className="model-indicators">
           <span className="model-dot claude" title="Claude"></span>
