@@ -21,11 +21,11 @@ jobs:
           cache: 'npm'
 
       - name: Install Frontend Dependencies
-        working-directory: ./frontend
+        working-directory: ${{ github.workspace }}/frontend
         run: npm ci
 
       - name: Build Frontend
-        working-directory: ./frontend
+        working-directory: ${{ github.workspace }}/frontend
         run: npm run build
 
       - name: Create .nojekyll file
