@@ -264,3 +264,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 *Created with ❤️ by Gareth Lee. Let the AI models debate your toughest questions!*
+
+## 🐳 Node.js Compatibility
+
+This project is compatible with Node.js 18+. The GitHub Actions workflow uses Node.js 18 to avoid deprecation warnings. If you need to use Node.js 20 locally, ensure you have the appropriate version installed.
+
