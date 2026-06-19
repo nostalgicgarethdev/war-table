@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War Table - AI Debate System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(30, 60, 114, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(30, 60, 114, 0.8), 0 0 30px rgba(30, 60, 114, 0.6); }
+            100% { box-shadow: 0 0 5px rgba(30, 60, 114, 0.5); }
+        }
+        .model-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .claude-dot { background-color: #1e3c72; }
+        .gpt5-dot { background-color: #10b981; }
+        .gemini-dot { background-color: #f59e0b; }
+        .qwen-dot { background-color: #8b5cf6; }
+        .grok-dot { background-color: #ef4444; }
+        .model-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .model-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3), 0 10px 10px -5px rgba(0,0,0,0.2);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .chat-message {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .chat-message:nth-child(1) { animation-delay: 0.1s; }
+        .chat-message:nth-child(2) { animation-delay: 0.2s; }
+        .chat-message:nth-child(3) { animation-delay: 0.3s; }
+        .chat-message:nth-child(4) { animation-delay: 0.4s; }
+        .chat-message:nth-child(5) { animation-delay: 0.5s; }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            animation: typingDot 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingDot {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        .bg-gradient-radial {
+            background: radial-gradient(circle at center, var(--tw-gradient-stops));
+        }
+        .debate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 min-h-screen text-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
+                War Table
+            </h1>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                Where AI models debate your toughest questions
+            </p>
+            <div class="mt-6 flex justify-center space-x-4">
+                <div class="model-dot claude-dot animate-pulse"></div>
+                <div class="model-dot gpt5-dot animate-pulse"></div>
+                <div class="model-dot gemini-dot animate-pulse"></div>
+                <div class="model-dot qwen-dot animate-pulse"></div>
+                <div class="model-dot grok-dot animate-pulse"></div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="space-y-16">
+            <!-- Hero Section -->
+            <section class="text-center">
+                <h2 class="text-3xl font-semibold mb-6">Experience Multi-Perspective AI Debates</h2>
+                <p class="text-gray-300 lg:w-2/3 mx-auto">
+                    Watch as five advanced AI models - Claude, GPT-5, Gemini, Qwen, and Grok - engage in structured debates 
+                    to provide comprehensive insights on complex questions.
+                </p>
+                <button id="startDebateBtn" 
+                        class="mt-8 inline-block px-8 py-4 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white font-semibold rounded-lg transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                    Start a Sample Debate
+                </button>
+            </section>
+
+            <!-- How It Works -->
+            <section>
+                <h2 class="text-2xl font-semibold text-center mb-8">How War Table Works</h2>
+                <div class="debate-grid">
+                    <div class="feature-card">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-600/20 w-10 h-10 flex items-center justify-center rounded-lg mr-3">
+                                <i class="fas fa-play text-blue-400"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-100">Round 1: Opening Statements</h3>
+                        </div>
+                        <p class="text-gray-400">
+                            Each model presents their initial position and reasoning on the question.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-600/20 w-10 h-10 flex items-center justify-center rounded-lg mr-3">
+                                <i class="fas fa-retweet text-green-400"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-100">Round 2: Rebuttals</h3>
+                        </div>
+                        <p class="text-gray-400">
+                            Models respond to others' arguments and defend their positions.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-purple-600/20 w-10 h-10 flex items-center justify-center rounded-lg mr-3">
+                                <i class="fas fa-handshake text-purple-400"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-100">Round 3: Synthesis</h3>
+                        </div>
+                        <p class="text-gray-400">
+                            Models collaborate to formulate a unified, balanced verdict.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Live Demo -->
+            <section id="debateDemo" class="hidden">
+                <h2 class="text-2xl font-semibold text-center mb-6">Live Debate Demo</h2>
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <!-- Question Input -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                            <h3 class="font-semibold text-gray-100">Enter your question for debate:</h3>
+                        </div>
+                        <input type="text" 
+                               id="debateQuestion" 
+                               placeholder="What question should the AI models debate? (e.g., 'What is the meaning of life?')"
+                               class="w-full px-4 py-3 bg-gray-800/70 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                               value="Should we fear artificial intelligence?"
+                        >
+                    </div>
+
+                    <!-- Debate Display -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold flex items-center">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                            Debate in Progress
+                        </h3>
+                        <div id="debateContent" class="space-y-4 bg-gray-800/50 backdrop-blur-sm rounded-xl p-5 min-h-[300px]">
+                            <!-- Debate messages will appear here -->
+                        </div>
+                    </div>
+
+                    <!-- Verdict -->
+                    <div id="debateVerdict" class="hidden bg-gray-800/50 backdrop-blur-sm rounded-xl p-6">
+                        <h3 class="text-lg font-semibold flex items-center mb-4">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                            Final Verdict
+                        </h3>
+                        <div id="verdictContent" class="space-y-3">
+                            <!-- Verdict will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features -->
+            <section>
+                <h2 class="text-2xl font-semibold text-center mb-8">Key Features</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="feature-card">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-indigo-600/20 w-10 h-10 flex items-center justify-center rounded-lg mr-3">
+                                <i class="fas fa-brain text-indigo-400"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-100">Multi-Model Perspectives</h3>
+                        </div>
+                        <p class="text-gray-400">
+                            Get insights from five distinct AI models, each with unique reasoning styles and specialties.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-cyan-600/20 w-10 h-10 flex items-center justify-center rounded-lg mr-3">
+                                <i class="fas fa-shield-alt text-cyan-400"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-100">Structured Debate Format</h3>
+                        </div>
+                        <p class="text-gray-400">
+                            Three-round debate process ensures thorough exploration of each question.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-rose-600/20 w-10 h-10 flex items-center justify-center rounded-lg mr-3">
+                                <i class="fas fa-chart-line text-rose-400"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-100">Consensus Building</h3>
+                        </div>
+                        <p class="text-gray-400">
+                            Models work together to find common ground and deliver balanced conclusions.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-yellow-600/20 w-10 h-10 flex items-center justify-center rounded-lg mr-3">
+                                <i class="fas fa-rocket text-yellow-400"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-100">Real-time Visualization</h3>
+                        </div>
+                        <p class="text-gray-400">
+                            Watch the debate unfold with smooth animations and visual feedback.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="text-center py-12 border-t border-gray-800/50 mt-16">
+                <p class="text-gray-500">
+                    War Table - An AI debate platform for exploring complex questions from multiple perspectives
+                </p>
+                <div class="mt-4 flex justify-center space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">GitHub</a>
+                    <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Documentation</a>
+                    <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Contact</a>
+                </div>
+                <p class="mt-4 text-xs text-gray-600">
+                    © 2026 War Table. All rights reserved.
+                </p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Sample debate data
+        const sampleDebate = {
+            question: "Should we fear artificial intelligence?",
+            rounds: [
+                {
+                    roundNumber: 1,
+                    title: "Opening Statements",
+                    responses: [
+                        { 
+                            modelId: "claude", 
+                            content: "As Claude, I approach this question with careful consideration. While AI presents tremendous opportunities for solving complex problems, we must acknowledge legitimate concerns about job displacement, autonomous weapons systems, and the potential for AI to amplify existing biases. The key is developing robust ethical frameworks and safety measures alongside technological advancement.",
+                            tokensUsed: 142,
+                            timestamp: new Date(Date.now() - 5000)
+                        },
+                        { 
+                            modelId: "gpt5", 
+                            content: "From a GPT-5 perspective, artificial intelligence represents both an extraordinary opportunity and a profound challenge. The potential benefits - curing diseases, climate change solutions, scientific discovery acceleration - are immense. However, we face significant risks including loss of human agency, economic disruption, and existential considerations. A balanced approach requires proactive governance, international cooperation, and continuous ethical evaluation as capabilities evolve.",
+                            tokensUsed: 158,
+                            timestamp: new Date(Date.now() - 4500)
+                        },
+                        { 
+                            modelId: "gemini", 
+                            content: "Considering this through Gemini's analytical lens, we need to examine AI fear from multiple angles: historical context shows we've always feared transformative technologies (printing press, electricity, internet), yet adaptation followed. Current concerns center on control, transparency, and alignment. Rather than fear, I advocate for informed caution - understanding limitations, demanding explainability, and building systems with human oversight as core design principles.",
+                            tokensUsed: 135,
+                            timestamp: new Date(Date.now() - 4000)
+                        },
+                        { 
+                            modelId: "qwen", 
+                            content: "Qwen's analysis suggests a pragmatic approach: focus on specific, controllable risks rather than general fear. Immediate concerns include deepfakes, automated harassment, and biased decision-making in hiring/lending. Long-term, we need resilient systems that fail safely, clear accountability chains, and education programs to help humans work effectively with AI tools. Fear paralyzes; preparedness empowers.",
+                            tokensUsed: 128,
+                            timestamp: new Date(Date.now() - 3500)
+                        },
+                        { 
+                            modelId: "grok", 
+                            content: "Grok takes a distinctive view: fearing AI is like fearing fire - useful emotion that can prevent burns, but ultimately we must learn to harness it. The real danger isn't AI itself, but how humans choose to use or misuse it. We should fear complacency more than AI - the risk that we'll create powerful systems without the wisdom to guide them. Bold thinking paired with responsibility is the path forward.",
+                            tokensUsed: 132,
+                            timestamp: new Date(Date.now() - 3000)
+                        }
+                    ]
+                },
+                {
+                    roundNumber: 2,
+                    title: "Rebuttals",
+                    responses: [
+                        { 
+                            modelId: "claude", 
+                            content: "I appreciate the optimism in other perspectives, but we must confront difficult truths: AI systems already exhibit emergent behaviors we don't fully understand, and as capabilities grow, so does potential for harm. The Facebook/WhatsApp forwarding riots demonstrate how even simple algorithms can cause real-world violence at scale. We need humility about our ability to control systems that may soon surpass human comprehension.",
+                            tokensUsed: 145,
+                            timestamp: new Date(Date.now() - 2500)
+                        },
+                        { 
+                            modelId: "gpt5", 
+                            content: "While acknowledging risks is important, excessive fear hinders progress. Consider that AI is already helping diagnose cancers earlier than human doctors, optimizing renewable energy grids, and discovering new materials. The solution isn't to halt development but to build better oversight mechanisms - thinks like AI-specific regulatory sandboxes, real-time monitoring systems, and international treaties governing certain applications.",
+                            tokensUsed: 152,
+                            timestamp: new Date(Date.now() - 2000)
+                        },
+                        { 
+                            modelId: "gemini", 
+                            content: "Let's refine the conversation: it's not about fear versus no fear, but about appropriate risk management. We seatbelt cars not because we fear driving, but because we respect the risks. Similarly, we need 'AI seatbelts' - technical approaches like constitutional AI, value learning, and corrigibility that keep systems aligned with human interests even as they become more capable.",
+                            tokensUsed: 140,
+                            timestamp: new Date(Date.now() - 1500)
+                        },
+                        { 
+                            modelId: "qwen", 
+                            content: "Building on practical considerations: rather than debating abstract fears, let's identify concrete actions. Implement AI impact assessments for major deployments, require third-party audits for high-risk systems, create AI incident databases similar to aviation safety reporting, and invest heavily in AI literacy programs so the public can make informed decisions about AI adoption in their lives and work.",
+                            tokensUsed: 130,
+                            timestamp: new Date(Date.now() - 1000)
+                        },
+                        { 
+                            modelId: "grok", 
+                            content: "Here's a contrarian thought: maybe we should fear NOT developing AI fast enough. Every day delayed means extended suffering from preventable diseases, inefficient resource use, and missed scientific breakthroughs. The risk calculation must include opportunity cost - what we lose by moving too slowly. Fear should motivate careful action, not paralysis.",
+                            tokensUsed: 135,
+                            timestamp: new Date(Date.now() - 500)
+                        }
+                    ]
+                },
+                {
+                    roundNumber: 3,
+                    title: "Synthesis & Verdict",
+                    responses: [
+                        { 
+                            modelId: "claude", 
+                            content: "Looking for common ground, I see agreement that AI demands proactive management rather than passive acceptance or rejection. We all recognize the need for ongoing vigilance, adaptive governance frameworks, and broadening participation in AI development decisions beyond just technologists.",
+                            tokensUsed: 95,
+                            timestamp: new Date()
+                        },
+                        { 
+                            modelId: "gpt5", 
+                            content: "Synthesizing perspectives, we converge on the need for layered approaches: technical safety measures (alignment research, robustness testing), governance structures (adaptive regulations, international cooperation), and societal preparation (education, economic adjustment support). The goal isn't perfect safety but continuous improvement in our ability to steer powerful technologies toward beneficial outcomes.",
+                            tokensUsed: 110,
+                            timestamp: new Date()
+                        },
+                        { 
+                            modelId: "gemini", 
+                            content: "Finding synthesis: AI should be developed with humility about what we don't know, respect for complex systems we're interacting with, and commitment to transparency. This means favoring approaches that allow human oversight and intervention, building systems that fail gracefully rather than catastrophically, and maintaining diverse perspectives in development teams to catch blind spots.",
+                            tokensUsed: 100,
+                            timestamp: new Date()
+                        },
+                        { 
+                            modelId: "qwen", 
+                            content: "From a practical standpoint, agreement emerges on immediate priorities: critical infrastructure protection (power grids, financial systems), preventing AI-enhanced disinformation campaigns, ensuring meaningful human oversight in lethal autonomous systems, and developing clear liability frameworks when AI systems cause harm.",
+                            tokensUsed: 92,
+                            timestamp: new Date()
+                        },
+                        { 
+                            modelId: "grok", 
+                            content: "Bringing it together: we concur that fear should be transformed into focused action. Rather than paralyzing dread, we need channeled concern that drives us to build better safeguards, ask harder questions upfront, and create systems where the benefits are widely shared while risks are minimized. The future isn't something that happens to us - it's something we build.",
+                            tokensUsed: 105,
+                            timestamp: new Date()
+                        }
+                    ]
+                }
+            ],
+            verdict: {
+                summary: "While AI presents significant opportunities for solving humanity's greatest challenges, the panel agrees that proactive risk management is essential. The consensus is not to fear AI itself, but to fear complacency in its development and deployment. Recommended approach: 'informed caution' - pursue beneficial applications vigorously while implementing robust safety measures, adaptive governance, and broad societal preparation.",
+                confidence: 0.82,
+                agreementPoints: [
+                    "Need for ongoing vigilance and adaptive governance",
+                    "Importance of broadening participation in AI development decisions", 
+                    "Value of technical safety measures like alignment research",
+                    "Need for societal preparation through education and economic support"
+                ],
+                disagreementPoints: [
+                    "Degree of immediate concern vs. long-term perspective",
+                    "Emphasis on opportunity costs of delayed development",
+                    "Specific priorities for initial regulatory focus"
+                ],
+                supportingModelIds: ["claude", "gpt5", "gemini", "qwen", "grok"]
+            }
+        };
+
+        // DOM Elements
+        const startDebateBtn = document.getElementById('startDebateBtn');
+        const debateDemo = document.getElementById('debateDemo');
+        const debateQuestionInput = document.getElementById('debateQuestion');
+        const debateContent = document.getElementById('debateContent');
+        const debateVerdict = document.getElementById('debateVerdict');
+        const verdictContent = document.getElementById('verdictContent');
+
+        // Start debate when button clicked
+        startDebateBtn.addEventListener('click', () => {
+            const question = debateQuestionInput.value.trim() || sampleDebate.question;
+            startDebateDemo(question);
+        });
+
+        // Enter key to start debate
+        debateQuestionInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const question = debateQuestionInput.value.trim();
+                if (question) {
+                    startDebateDemo(question);
+                }
+            }
+        });
+
+        function startDebateDemo(question) {
+            // Update question
+            debateQuestionInput.value = question;
+            
+            // Show demo section
+            debateDemo.classList.remove('hidden');
+            startDebateBtn.textContent = 'New Question';
+            startDebateBtn.classList.remove('hover:scale-105');
+            startDebateBtn.classList.add('opacity-75');
+            
+            // Clear previous content
+            debateContent.innerHTML = '';
+            verdictContent.innerHTML = '';
+            debateVerdict.classList.add('hidden');
+            
+            // Simulate debate with sample data
+            setTimeout(() => {
+                addDebateRound(sampleDebate.rounds[0]);
+            }, 500);
+            
+            setTimeout(() => {
+                addDebateRound(sampleDebate.rounds[1]);
+            }, 3000);
+            
+            setTimeout(() => {
+                addDebateRound(sampleDebate.rounds[2]);
+                setTimeout(() => {
+                    showVerdict(sampleDebate.verdict);
+                }, 2000);
+            }, 5500);
+        }
+
+        function addDebateRound(roundData) {
+            // Add round header
+            const roundHeader = document.createElement('div');
+            roundHeader.className = 'flex items-center mb-4';
+            roundHeader.innerHTML = `
+                <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                <h3 class="font-semibold text-gray-100">${roundData.title}</h3>
+            `;
+            debateContent.appendChild(roundHeader);
+            
+            // Add responses with typing effect
+            roundData.responses.forEach((response, index) => {
+                setTimeout(() => {
+                    addMessage(response.modelId, response.content, response.tokensUsed);
+                }, index * 800);
+            });
+        }
+
+        function addMessage(modelId, content, tokensUsed) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message p-4 bg-gray-800/50 backdrop-blur-sm rounded-lg border-l-4`;
+            
+            // Set border color based on model
+            const modelColors = {
+                claude: '#1e3c72',
+                gpt5: '#10b981',
+                gemini: '#f59e0b',
+                qwen: '#8b5cf6',
+                grok: '#ef4444'
+            };
+            messageDiv.style.borderLeftColor = modelColors[modelId] || '#6b7280';
+            
+            messageDiv.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 flex items-center justify-center rounded-lg 
+                                bg-${modelId === 'claude' ? 'blue' : 
+                                    modelId === 'gpt5' ? 'green' : 
+                                    modelId === 'gemini' ? 'yellow' : 
+                                    modelId === 'qwen' ? 'purple' : 'red'}-600/20 
+                                text-${modelId === 'claude' ? 'blue' : 
+                                        modelId === 'gpt5' ? 'green' : 
+                                        modelId === 'gemini' ? 'yellow' : 
+                                        modelId === 'qwen' ? 'purple' : 'red'}-400">
+                            ${modelId.toUpperCase().charAt(0)}
+                        </div>
+                    </div>
+                    <div class="ml-3 w-full">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-semibold text-gray-100">${modelId.toUpperCase()}</span>
+                            <span class="text-xs text-gray-500">${new Date(response.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed">${content}</p>
+                        <div class="mt-2 flex items-center text-xs text-gray-500">
+                            <span>${tokensUsed?.toLocaleString() || '0'} tokens</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            debateContent.appendChild(messageDiv);
+            // Scroll to bottom
+            debateContent.scrollTop = debateContent.scrollHeight;
+        }
+
+        function showVerdict(verdict) {
+            debateVerdict.classList.remove('hidden');
+            
+            verdictContent.innerHTML = `
+                <p class="text-gray-300 leading-relaxed mb-4">${verdict.summary}</p>
+                
+                <div class="space-y-3">
+                    ${verdict.agreementPoints.length > 0 ? `
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-green-400 flex items-center">
+                                <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                Points of Agreement
+                            </h4>
+                            <ul class="list-disc pl-5 space-y-1 text-gray-400">
+                                ${verdict.agreementPoints.map(point => `<li>${point}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${verdict.disagreementPoints.length > 0 ? `
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-yellow-400 flex items-center">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                                Points of Disagreement
+                            </h4>
+                            <ul class="list-disc pl-5 space-y-1 text-gray-400">
+                                ${verdict.disagreementPoints.map(point => `<li>${point}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-800/50 flex justify-between text-sm">
+                    <span class="text-gray-400">Confidence: ${Math.round(verdict.confidence * 100)}%</span>
+                    <span class="text-gray-400">Supported by: ${verdict.supportingModelIds.map(m => m.toUpperCase()).join(', ')}</span>
+                </div>
+            `;
+            
+            // Scroll to verdict
+            debateVerdict.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

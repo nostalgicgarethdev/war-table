@@ -1,4 +1,4 @@
-name: Deploy Frontend to GitHub Pages
+name: Deploy Static Site to GitHub Pages
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -16,40 +16,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Setup Node.js (for any potential JS processing)
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install Frontend Dependencies
-        run: |
-          echo "GitHub workspace: $GITHUB_WORKSPACE"
-          echo "Listing frontend directory:"
-          ls -la "$GITHUB_WORKSPACE/frontend/"
-          echo "Checking package-lock.json:"
-          ls -la "$GITHUB_WORKSPACE/frontend/package-lock.json"
-          echo "Changing to frontend directory and installing..."
-          cd "$GITHUB_WORKSPACE/frontend"
-          pwd
-          ls -la package-lock.json
-          npm ci
-
-      - name: Build Frontend
-        run: |
-          echo "Building frontend..."
-          cd "$GITHUB_WORKSPACE/frontend"
-          pwd
-          npm run build
-
-      - name: Create .nojekyll file
-        run: touch frontend/dist/.nojekyll
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy Static Site
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./frontend/dist
+          publish_dir: ./static-site
           publish_branch: gh-pages
           force_orphan: true
           enable_jekyll: false
