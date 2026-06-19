@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,11 +26,13 @@ jobs:
       - name: Build Frontend
         run: cd frontend && npm run build
 
+      - name: Create .nojekyll file
+        run: touch frontend/dist/.nojekyll
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./frontend/dist
-          # If using a project site, add the following:
-          # publish_branch: gh-pages
-          # destination_dir: ./  # optional: specify subfolder
+          publish_branch: gh-pages
+          force_orphan: true
