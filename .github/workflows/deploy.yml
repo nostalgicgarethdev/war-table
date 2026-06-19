@@ -14,17 +14,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Debug directory structure
-        run: |
-          echo "Repository root:"
-          ls -la
-          echo ""
-          echo "Frontend directory:"
-          ls -la frontend/
-          echo ""
-          echo "Checking for package-lock.json in frontend:"
-          ls -la frontend/package-lock.json || echo "NOT FOUND"
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -34,20 +23,17 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           echo "Current directory: $(pwd)"
-          echo "Contents of current directory:"
-          ls -la
-          echo ""
-          echo "Trying npm ci with --prefix frontend:"
-          npm ci --prefix frontend
-          echo ""
-          echo "Contents of frontend/node_modules after install (if any):"
-          ls -la frontend/node_modules 2>/dev/null || echo "frontend/node_modules does not exist yet"
+          cd frontend
+          echo "Changed to frontend directory: $(pwd)"
+          ls -la package-lock.json
+          npm ci
 
       - name: Build Frontend
         run: |
           echo "Current directory: $(pwd)"
-          echo "Trying npm run build with --prefix frontend:"
-          npm run build --prefix frontend
+          cd frontend
+          echo "Changed to frontend directory: $(pwd)"
+          npm run build
 
       - name: Create .nojekyll file
         run: touch frontend/dist/.nojekyll
