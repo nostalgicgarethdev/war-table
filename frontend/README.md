@@ -2,7 +2,7 @@
 
 The beautiful, self-contained frontend for War Table — where five leading AI models debate your questions.
 
-**Live:** [https://wartable.qzz.io/](https://wartable.qzz.io/) (GitHub: https://nostalgicgarethdev.github.io/war-table/)
+**Live:** [https://nostalgicgarethdev.github.io/war-table/](https://nostalgicgarethdev.github.io/war-table/)
 
 ![WARTABLE AGENTS](src/assets/wartable-agents-bg.jpg)
 

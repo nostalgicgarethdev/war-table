@@ -4,14 +4,15 @@
 
 A beautiful, self-contained demo where Claude, GPT-5, Gemini, Qwen, and Grok debate your toughest questions in three structured rounds — and deliver a single, thoughtful verdict.
 
-**Live demo:** [wartable.qzz.io](https://wartable.qzz.io)  
-The old GitHub Pages URL also continues to work: [https://nostalgicgarethdev.github.io/war-table/](https://nostalgicgarethdev.github.io/war-table/)
+**Live demo (quick):** [https://nostalgicgarethdev.github.io/war-table/](https://nostalgicgarethdev.github.io/war-table/)
+
+Custom domain (wartable.qzz.io) coming soon once DNS settles.
 
 ![WARTABLE AGENTS poster background](frontend/src/assets/wartable-agents-bg.jpg)
 
-## Custom Domain Setup (wartable.qzz.io)
+## Custom Domain (coming soon)
 
-Your site is ready for the custom domain `wartable.qzz.io`.
+Your site is set up for `wartable.qzz.io` (use the GitHub URL above for now).
 
 ### Quick explanations
 - **Name Server (NS):** The "brain" that manages your domain's DNS records. For qzz.io subdomains it's handled in the DigitalPlat dashboard (or Cloudflare if you set custom nameservers). You rarely change this.
@@ -58,8 +59,9 @@ If using Porkbun instead:
 The `site/CNAME` file already contains `wartable.qzz.io` and gets deployed automatically.
 
 Both URLs will work:
-- Custom domain (primary): https://wartable.qzz.io
-- Old GitHub Pages (fallback): https://nostalgicgarethdev.github.io/war-table/
+Use the GitHub URL for now: https://nostalgicgarethdev.github.io/war-table/
+
+(Custom domain setup is ready but DNS propagation is still settling.)
 
 They serve the exact same content. The github.io URL will keep working even after the custom domain is live.
 
@@ -202,7 +204,7 @@ npm run lint  # Runs both frontend and backend linting
 The beautiful, fully self-contained React frontend is automatically built and deployed using the official GitHub Pages action:
 
 - Push to `main` (or manual dispatch) → GitHub Actions builds the React app and deploys the `dist/` folder
-- Live site: https://wartable.qzz.io/ (GitHub fallback: https://nostalgicgarethdev.github.io/war-table/)
+- Live site: https://nostalgicgarethdev.github.io/war-table/
 - 100% static — works instantly with rich simulated debates (no backend required)
 - Workflow: `.github/workflows/deploy.yml`
 

@@ -7,7 +7,7 @@ The primary deployed experience is the polished **React + Vite** frontend:
 - ✅ Rich client-side simulation of all 5 models across 3 debate rounds
 - ✅ Professional UI, animations, copyable transcripts, example questions
 - ✅ Automatically built + deployed via GitHub Actions on every push to `main`
-- ✅ Live: https://wartable.qzz.io/ (or https://nostalgicgarethdev.github.io/war-table/)
+- ✅ Live: https://nostalgicgarethdev.github.io/war-table/
 
 ## 📦 How Deployment Works
 - Workflow: `.github/workflows/deploy.yml`
