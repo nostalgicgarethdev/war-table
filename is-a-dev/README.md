@@ -14,7 +14,7 @@ This folder is kept as reference / alternative free option.
 
 4. After the PR is merged:
    - Go to https://github.com/nostalgicgarethdev/war-table/settings/pages
-   - Under "Custom domain", enter: `war-table.is-a.dev`
+   - (This folder is legacy; you are now on wartable.qzz.io)
    - Save and enable HTTPS when ready.
 
 The `site/CNAME` file ensures the domain works with our GitHub Actions deployment (which publishes the `site/` folder).
