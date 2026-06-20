@@ -62,8 +62,13 @@ If you're setting up a new domain on Porkbun instead:
 - Then tell me the exact domain name and I'll update all files here.
 
 ### Troubleshooting
-- DNS check in GitHub failing? Make sure the CNAME record is correct and the `site/CNAME` file matches.
-- Still seeing GitHub Pages URL? Propagation takes time. Use `dig wartable.qzz.io` or a DNS checker to verify.
+- "DNS probe failed", NXDOMAIN, or doesn't resolve?
+  1. Go to GitHub repo **Settings → Pages** and enter `wartable.qzz.io` in Custom domain, then Save. This triggers GitHub's check.
+  2. In Cloudflare DNS: confirm CNAME record exists with **Name: @**, Target `nostalgicgarethdev.github.io`, and **Proxy: DNS only** (gray cloud, not orange).
+  3. In Digiplat: confirm nameservers are exactly the two from Cloudflare.
+  4. Wait 5-30 minutes (sometimes longer). Use `dig wartable.qzz.io` or https://dnschecker.org to test.
+- GitHub DNS check still failing after that? The `site/CNAME` file must exactly match the domain you entered (it does). Re-save in GitHub.
+- Still seeing old GitHub URL? DNS not fully propagated yet. Hard refresh or use incognito.
 
 ## ✨ Features
 
