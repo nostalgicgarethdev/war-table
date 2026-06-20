@@ -1,6 +1,8 @@
-# Free Custom Domain Setup (is-a.dev)
+# Free Custom Domain Setup (is-a.dev) — now using own domain
 
-This folder contains everything needed for the free `war-table.is-a.dev` subdomain.
+You switched to wartable.qzz.io.
+
+This folder is kept as reference / alternative free option.
 
 ## Steps
 
