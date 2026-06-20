@@ -6,8 +6,6 @@ A beautiful, self-contained demo where Claude, GPT-5, Gemini, Qwen, and Grok deb
 
 Live demo: [https://nostalgicgarethdev.github.io/war-table/](https://nostalgicgarethdev.github.io/war-table/)
 
-The Agents weave the multiverse using **Loom** — the multiversal tree writing interface by socketteer (github.com/socketteer/loom). Tokenise the Loom: $LOOM.
-
 ![WARTABLE AGENTS poster background](frontend/src/assets/wartable-agents-bg.jpg)
 
 ## ✨ Features
