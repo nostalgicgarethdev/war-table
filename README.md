@@ -4,8 +4,7 @@
 
 A beautiful, self-contained demo where Claude, GPT-5, Gemini, Qwen, and Grok debate your toughest questions in three structured rounds — and deliver a single, thoughtful verdict.
 
-Live demo: [https://nostalgicgarethdev.github.io/war-table/](https://nostalgicgarethdev.github.io/war-table/)  
-(Coming soon: **wartable.dev**)
+**Live demo:** [war-table.is-a.dev](https://war-table.is-a.dev) (or [GitHub Pages fallback](https://nostalgicgarethdev.github.io/war-table/))
 
 ![WARTABLE AGENTS poster background](frontend/src/assets/wartable-agents-bg.jpg)
 
@@ -134,7 +133,7 @@ npm run lint  # Runs both frontend and backend linting
 The beautiful, fully self-contained React frontend is automatically built and deployed using the official GitHub Pages action:
 
 - Push to `main` (or manual dispatch) → GitHub Actions builds the React app and deploys the `dist/` folder
-- Live site: https://nostalgicgarethdev.github.io/war-table/
+- Live site: https://war-table.is-a.dev/ (GitHub fallback: https://nostalgicgarethdev.github.io/war-table/)
 - 100% static — works instantly with rich simulated debates (no backend required)
 - Workflow: `.github/workflows/deploy.yml`
 

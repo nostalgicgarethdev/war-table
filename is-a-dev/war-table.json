@@ -1,0 +1,11 @@
+{
+  "description": "War Table - 5 AIs. One Decision.",
+  "repo": "https://github.com/nostalgicgarethdev/war-table",
+  "owner": {
+    "username": "nostalgicgarethdev",
+    "email": "garethlee@example.com"
+  },
+  "records": {
+    "CNAME": "nostalgicgarethdev.github.io"
+  }
+}
