@@ -4,7 +4,8 @@
 
 A beautiful, self-contained demo where Claude, GPT-5, Gemini, Qwen, and Grok debate your toughest questions in three structured rounds — and deliver a single, thoughtful verdict.
 
-**Live demo:** [wartable.qzz.io](https://wartable.qzz.io) (or [GitHub Pages fallback](https://nostalgicgarethdev.github.io/war-table/))
+**Live demo:** [wartable.qzz.io](https://wartable.qzz.io)  
+The old GitHub Pages URL also continues to work: [https://nostalgicgarethdev.github.io/war-table/](https://nostalgicgarethdev.github.io/war-table/)
 
 ![WARTABLE AGENTS poster background](frontend/src/assets/wartable-agents-bg.jpg)
 
@@ -55,6 +56,12 @@ If using Porkbun instead:
 4. Once the check passes, enable **Enforce HTTPS**.
 
 The `site/CNAME` file already contains `wartable.qzz.io` and gets deployed automatically.
+
+Both URLs will work:
+- Custom domain (primary): https://wartable.qzz.io
+- Old GitHub Pages (fallback): https://nostalgicgarethdev.github.io/war-table/
+
+They serve the exact same content. The github.io URL will keep working even after the custom domain is live.
 
 ### Note on Porkbun
 If you're setting up a new domain on Porkbun instead:
