@@ -8,6 +8,44 @@ A beautiful, self-contained demo where Claude, GPT-5, Gemini, Qwen, and Grok deb
 
 ![WARTABLE AGENTS poster background](frontend/src/assets/wartable-agents-bg.jpg)
 
+## Custom Domain Setup (wartable.qzz.io)
+
+Your site is ready for the custom domain `wartable.qzz.io`.
+
+### Quick explanations
+- **Name Server (NS):** The "brain" that manages your domain's DNS records. For qzz.io subdomains it's handled in the DigitalPlat dashboard (or Cloudflare if you set custom nameservers). You rarely change this.
+- **CNAME:** A DNS "alias" record. It makes `wartable.qzz.io` point to GitHub Pages (`nostalgicgarethdev.github.io`).
+
+### DNS Configuration
+Log into your domain provider (DigitalPlat for qzz.io, or wherever you manage DNS / Porkbun / Cloudflare):
+
+1. Go to DNS records for the `wartable` part.
+2. Add a **CNAME** record:
+   - **Name / Host**: `wartable` (or the subdomain label)
+   - **Target / Value**: `nostalgicgarethdev.github.io`
+   - TTL: 300 (5 minutes) or default
+3. Save and wait for propagation (usually 5-60 minutes).
+
+If using Porkbun:
+- Use the "Github" quick config button if available, or manually add the CNAME as above.
+
+### GitHub Pages Configuration
+1. Go to your repo → **Settings → Pages**
+2. Under **Custom domain**, enter: `wartable.qzz.io`
+3. Click Save.
+4. Once the check passes, enable **Enforce HTTPS**.
+
+The `site/CNAME` file already contains `wartable.qzz.io` and gets deployed automatically.
+
+### Note on Porkbun
+If you're setting up a new domain on Porkbun instead:
+- Add the CNAME as described.
+- Then tell me the exact domain name and I'll update all files here.
+
+### Troubleshooting
+- DNS check in GitHub failing? Make sure the CNAME record is correct and the `site/CNAME` file matches.
+- Still seeing GitHub Pages URL? Propagation takes time. Use `dig wartable.qzz.io` or a DNS checker to verify.
+
 ## ✨ Features
 
 - **Fully standalone** — No backend or API keys required. Everything runs beautifully in the browser.
