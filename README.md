@@ -17,16 +17,35 @@ Your site is ready for the custom domain `wartable.qzz.io`.
 - **CNAME:** A DNS "alias" record. It makes `wartable.qzz.io` point to GitHub Pages (`nostalgicgarethdev.github.io`).
 
 ### DNS Configuration
-Log into your domain provider (DigitalPlat for qzz.io, or wherever you manage DNS / Porkbun / Cloudflare):
 
-1. Go to DNS records for the `wartable` part.
-2. Add a **CNAME** record:
-   - **Name / Host**: `wartable` (or the subdomain label)
-   - **Target / Value**: `nostalgicgarethdev.github.io`
-   - TTL: 300 (5 minutes) or default
-3. Save and wait for propagation (usually 5-60 minutes).
+**If you can add records directly:**
+- Log into Digiplat (or your DNS provider).
+- Add a **CNAME** record:
+  - **Name / Host**: `@` (or leave blank / `wartable`)
+  - **Target / Value**: `nostalgicgarethdev.github.io`
+  - TTL: 300
 
-If using Porkbun:
+**If you only see the Nameserver option (common with qzz.io):**
+You must delegate DNS to Cloudflare (free & recommended).
+
+1. Go to [cloudflare.com](https://dash.cloudflare.com) and log in (create free account if needed).
+2. Click **Add a Site** → enter `wartable.qzz.io` → Continue.
+3. Cloudflare will show 2 nameservers (e.g. `ada.ns.cloudflare.com` and another).
+4. Copy them.
+5. Back in Digiplat dashboard for `wartable.qzz.io`:
+   - Find the **Nameserver** section.
+   - Add / set the two Cloudflare nameservers.
+   - Save.
+6. Wait for Cloudflare to say "Active" (check email or dashboard, can take minutes to hours).
+7. In Cloudflare → DNS tab for the site:
+   - Add record:
+     - Type: **CNAME**
+     - Name: `@`
+     - Target: `nostalgicgarethdev.github.io`
+     - **Proxy status: DNS only** (turn the orange cloud off)
+   - Save.
+
+If using Porkbun instead:
 - Use the "Github" quick config button if available, or manually add the CNAME as above.
 
 ### GitHub Pages Configuration
